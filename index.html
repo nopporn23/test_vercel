@@ -132,7 +132,38 @@
 
     /* ===== ผลลัพธ์ ===== */
     #result { display: none; }
-    #result > .card, #result > .traits { animation: rise .7s cubic-bezier(.22,1,.36,1) both; }
+    .chapter { display: none; }
+    .chapter.in { animation: rise .7s cubic-bezier(.22,1,.36,1) both; }
+    .chhead { text-align: center; margin: 6px 0 18px; }
+    .chno { display: inline-block; color: var(--gold); letter-spacing: .3em; font-size: 13px; font-weight: 700; }
+    .chtitle {
+      margin: 2px 0 8px; font-family: "Noto Serif Thai", serif; font-weight: 800; font-size: clamp(24px, 6.5vw, 34px);
+      background: linear-gradient(180deg, #fff3c7 0%, #f0c14f 60%, #b8862b 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .chintro { margin: 0 auto; max-width: 560px; color: #eadfff; font-size: 16px; font-style: italic; }
+    .chhead .orn { margin: 12px auto 0; }
+
+    #nav {
+      display: none; position: fixed; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 20;
+      width: min(720px, calc(100% - 20px)); flex-direction: column; gap: 6px;
+      padding: 8px 12px 8px; border-radius: 16px;
+      background: rgba(20,9,43,.93); border: 1px solid var(--gold-d);
+      box-shadow: 0 10px 34px rgba(0,0,0,.6), 0 0 22px rgba(232,182,74,.18); backdrop-filter: blur(6px);
+    }
+    #navBar { height: 4px; border-radius: 99px; background: rgba(255,255,255,.12); overflow: hidden; }
+    #navFill { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #b8862b, #ffe08a); transition: width .4s; }
+    .navrow { display: flex; align-items: center; gap: 10px; }
+    #navTxt { flex: 1; text-align: center; color: #f6d98b; font-family: "Noto Serif Thai", serif; font-weight: 700; font-size: 14px; line-height: 1.3; }
+    #nav button { width: auto; padding: 8px 14px; font-size: 14px; font-weight: 700; border-radius: 10px; cursor: pointer; color: #f6d98b; background: transparent; border: 1px solid var(--gold-d); }
+    #nav button.primary { color: #3a1c00; background: linear-gradient(180deg, #ffe08a, #e8b64a 60%, #c98f1f); border-color: #8a6212; }
+    #nav button:disabled { opacity: .35; cursor: default; }
+    #nav button.link { border: 0; padding: 2px 6px; font-size: 12px; font-weight: 600; text-decoration: underline; }
+    .navrow2 { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    #navDots { display: flex; gap: 6px; flex-wrap: wrap; }
+    #navDots i { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,.25); cursor: pointer; }
+    #navDots i.on { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+    body.reading { padding-bottom: 150px; }
     @keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 
     .hero { text-align: center; padding-top: 34px; }
@@ -190,8 +221,36 @@
       .traits { grid-template-columns: 1fr; }
       .mandala { width: 120px; height: 120px; }
     }
+    .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+    label.mode {
+      position: relative; cursor: pointer; display: block; padding: 12px 14px; border-radius: 12px;
+      border: 1px solid #d6bf84; background: #fffdf6; color: var(--ink); font-weight: 400; transition: box-shadow .15s, background .15s;
+    }
+    label.mode input { position: absolute; opacity: 0; pointer-events: none; }
+    label.mode b { display: block; font-family: "Noto Serif Thai", serif; font-size: 16px; color: var(--purple); }
+    label.mode small { display: block; color: var(--muted); font-size: 12.5px; line-height: 1.45; margin-top: 2px; }
+    label.mode:has(input:checked) { background: #fbe7a8; border-color: var(--gold-d); box-shadow: 0 0 0 2px rgba(184,134,43,.35), 0 6px 16px rgba(184,134,43,.25); }
+    label.mode:has(input:focus-visible) { outline: 2px solid var(--gold-d); outline-offset: 2px; }
+
+    .facebox { margin-top: 14px; padding: 12px 14px; border-radius: 12px; border: 1px dashed var(--gold-d); background: rgba(251,231,168,.35); }
+    .facebox .ft { font-family: "Noto Serif Thai", serif; font-weight: 800; color: var(--purple); font-size: 16px; margin: 0 0 4px; }
+    .facebox .kv { margin: 4px 0; font-size: 14px; color: var(--ink); }
+    .scriptbox {
+      display: none; margin: 0 0 16px; padding: 14px 16px; border-radius: 14px; text-align: left;
+      background: linear-gradient(180deg, rgba(40,18,80,.88), rgba(20,9,43,.9));
+      border: 1px dashed var(--gold); color: #eadfff; box-shadow: 0 8px 26px rgba(0,0,0,.4);
+    }
+    .scriptbox h4 { margin: 0 0 8px; font-family: "Noto Serif Thai", serif; color: var(--gold); font-size: 16px; }
+    .scriptbox .lb { display: block; color: #f6d98b; font-weight: 700; font-size: 13px; margin-top: 8px; letter-spacing: .03em; }
+    .scriptbox q { display: block; margin: 3px 0; font-style: italic; color: #fff; quotes: "“" "”"; }
+    .scriptbox ul { margin: 3px 0 0; padding-left: 20px; }
+    .scriptbox li { margin: 3px 0; }
+    .scriptbox .warn { margin-top: 10px; padding: 8px 10px; border-radius: 8px; background: rgba(185,28,28,.18); border: 1px solid rgba(248,113,113,.5); color: #ffd6d6; font-size: 14px; }
+    .scriptbox details { margin-top: 10px; }
+    .scriptbox summary { cursor: pointer; color: var(--gold); font-weight: 700; }
+    @media (max-width: 520px) { .modes { grid-template-columns: 1fr; } }
     @media (prefers-reduced-motion: reduce) {
-      body::after, .mandala .spin, .mandala .spin2, button.go::after, #result > .card, #result > .traits { animation: none !important; }
+      body::after, .mandala .spin, .mandala .spin2, button.go::after, .chapter.in { animation: none !important; }
       body::after { opacity: .5; }
     }
   </style>
@@ -239,11 +298,18 @@
         <label>เพศกำเนิด<select id="sx"><option value="">ไม่ระบุ</option><option value="ชาย">ชาย</option><option value="หญิง">หญิง</option></select></label>
       </div>
       <p class="note" style="color:var(--muted);margin:8px 0 0">เวลาเกิดและเพศเป็นข้อมูลเสริม (ไม่บังคับ) ไม่ทราบเวลาเกิดก็ดูดวงได้</p>
+      <div id="faceForm" class="facebox"></div>
+      <div class="modes" role="radiogroup" aria-label="เลือกรูปแบบการดูผล">
+        <label class="mode"><input type="radio" name="mode" value="self" checked><b>🔮 ดูเอง</b><small>อ่านผลทีละบทด้วยตัวเอง</small></label>
+        <label class="mode"><input type="radio" name="mode" value="reader"><b>🧙 สำหรับหมอดู</b><small>มีคำพูดแนะนำในแต่ละบท ให้เล่าอย่างน่าเชื่อถือและซื่อตรง</small></label>
+      </div>
       <button class="go" type="submit">✦ เปิดดวงชะตา ✦</button>
       <p class="err" id="err" role="alert"></p>
     </form>
 
     <section id="result" aria-live="polite">
+      <div class="chapter" data-title="ตัวตนของคุณ">
+        <div class="chhead"><span class="chno">บทที่ 1</span><h2 class="chtitle">ตัวตนของคุณ</h2><p class="chintro">เรามาเริ่มจากตัวตนของคุณก่อน — อารมณ์ นิสัย ความซื่อสัตย์ และบุคลิกที่คนรอบข้างมองเห็น</p><div class="orn">❖</div></div>
       <div class="card hero">
         <div class="em" id="rEm"></div>
         <small id="rDate"></small>
@@ -252,24 +318,69 @@
         <div class="chips" id="rChips"></div>
       </div>
       <div class="traits" id="rTraits"></div>
+      <div class="card extra" id="rExtra" style="margin-top:16px"></div>
+      </div>
+      <div class="chapter" data-title="จิตใจและวิธีคิดเชิงลึก">
+        <div class="chhead"><span class="chno">บทที่ 2</span><h2 class="chtitle">จิตใจและวิธีคิดเชิงลึก</h2><p class="chintro">ต่อมา เราลงลึกถึงจิตใจและวิธีคิด ว่าคุณเป็นคนแบบไหนเมื่อมองจากหลายมุม</p><div class="orn">❖</div></div>
       <div class="card t12" id="r12" style="margin-top:16px"></div>
+      <div class="card t12" id="r9" style="margin-top:16px"></div>
       <div class="card t12" id="r20" style="margin-top:16px"></div>
       <div class="card t12" id="r6" style="margin-top:16px"></div>
-      <div class="card t12" id="r9" style="margin-top:16px"></div>
+      </div>
+      <div class="chapter" data-title="โหวงเฮ้ง (ใบหน้า)">
+        <div class="chhead"><span class="chno">บทที่ 3</span><h2 class="chtitle">โหวงเฮ้ง (ใบหน้า)</h2><p class="chintro">ต่อด้วยโหวงเฮ้ง — ดูจากรูปหน้าที่คุณให้ไว้ในหน้าแรก</p><div class="orn">❖</div></div>
+      <div class="card t12" id="rFace" style="margin-top:16px"></div>
+      </div>
+      <div class="chapter" data-title="เส้นทางชีวิตตามช่วงวัย">
+        <div class="chhead"><span class="chno">บทที่ 3</span><h2 class="chtitle">เส้นทางชีวิตตามช่วงวัย</h2><p class="chintro">ทีนี้มาดูเส้นทางชีวิตของคุณ ว่าแต่ละช่วงวัยมีเรื่องอะไรรออยู่</p><div class="orn">❖</div></div>
+      <div class="card t12" id="rLife" style="margin-top:16px"></div>
+      </div>
+      <div class="chapter" data-title="ดวงช่วงนี้ เดือนนี้ ปีนี้">
+        <div class="chhead"><span class="chno">บทที่ 4</span><h2 class="chtitle">ดวงช่วงนี้ เดือนนี้ ปีนี้</h2><p class="chintro">จากนั้นมาดูดวงช่วงนี้ — เดือนนี้และปีนี้ มีเรื่องอะไรที่ควรระวัง</p><div class="orn">❖</div></div>
       <div class="card t12" id="rF" style="margin-top:16px"></div>
+      <div class="card t12" id="rY" style="margin-top:16px"></div>
+      <div class="card t12" id="rChong" style="margin-top:16px"></div>
+      </div>
+      <div class="chapter" data-title="การงาน การเงิน ความรัก ครอบครัว">
+        <div class="chhead"><span class="chno">บทที่ 5</span><h2 class="chtitle">การงาน การเงิน ความรัก ครอบครัว</h2><p class="chintro">ต่อไปคือเรื่องที่คนอยากรู้มากที่สุด — การงาน การเงิน ความรัก และครอบครัว</p><div class="orn">❖</div></div>
+      <div class="card t12" id="rC" style="margin-top:16px"></div>
+      <div class="card t12" id="rT" style="margin-top:16px"></div>
+      <div class="card t12" id="rM" style="margin-top:16px"></div>
+      <div class="card t12" id="rFam" style="margin-top:16px"></div>
+      </div>
+      <div class="chapter" data-title="ฤกษ์ยามและวันดี">
+        <div class="chhead"><span class="chno">บทที่ 6</span><h2 class="chtitle">ฤกษ์ยามและวันดี</h2><p class="chintro">เรื่องจังหวะเวลาก็สำคัญ — ยามดี วันดี และวันที่ควรเลี่ยงเรื่องสำคัญ</p><div class="orn">❖</div></div>
       <div class="card t12" id="rH" style="margin-top:16px"></div>
+      </div>
+      <div class="chapter" data-title="ดวงวันนี้และสัปดาห์นี้">
+        <div class="chhead"><span class="chno">บทที่ 7</span><h2 class="chtitle">ดวงวันนี้และสัปดาห์นี้</h2><p class="chintro">มาดูดวงของวันนี้และอีก 6 วันข้างหน้า สีเสื้อ สีกาลกิณี การงาน และการเงิน</p><div class="orn">❖</div></div>
       <div class="card t12" id="rD" style="margin-top:16px"></div>
       <div class="card t12" id="rW" style="margin-top:16px"></div>
+      </div>
+      <div class="chapter" data-title="โชคลาภ เลขมงคล ของหาย">
+        <div class="chhead"><span class="chno">บทที่ 8</span><h2 class="chtitle">โชคลาภ เลขมงคล ของหาย</h2><p class="chintro">ปิดท้ายด้วยเรื่องโชคลาภ เลขมงคล สีมงคล และดวงของหาย</p><div class="orn">❖</div></div>
       <div class="card t12" id="rL" style="margin-top:16px"></div>
-      <div class="card t12" id="rC" style="margin-top:16px"></div>
-      <div class="card t12" id="rM" style="margin-top:16px"></div>
-      <div class="card t12" id="rY" style="margin-top:16px"></div>
+      <div class="card t12" id="rNum" style="margin-top:16px"></div>
+      <div class="card t12" id="rLost" style="margin-top:16px"></div>
+      </div>
+      <div class="chapter" data-title="สรุปและเก็บผลไว้">
+        <div class="chhead"><span class="chno">บทที่ 9</span><h2 class="chtitle">สรุปและเก็บผลไว้</h2><p class="chintro">สุดท้ายนี้ เก็บผลดวงของคุณไว้ แล้วแชร์ให้คนที่สนใจได้</p><div class="orn">❖</div></div>
       <div class="card t12" id="rS" style="margin-top:16px"></div>
-      <div class="card extra" id="rExtra" style="margin-top:16px"></div>
+      </div>
     </section>
 
     <p class="note">* เพื่อความบันเทิงเท่านั้น ไม่ใช่การวินิจฉัยหรือคำทำนายที่พิสูจน์ได้ทางวิทยาศาสตร์ ใช้เป็นแนวทางสนุกๆ ประกอบการพูดคุยได้ครับ<br>
       ข้อมูลที่กรอก (รวมเวลาเกิดและเพศ) ประมวลผลในเบราว์เซอร์ ไม่ถูกส่งหรือเก็บไว้ที่ใด</p>
+  </div>
+
+  <div id="nav" role="navigation" aria-label="เลื่อนอ่านทีละบท">
+    <div id="navBar"><i id="navFill"></i></div>
+    <div class="navrow">
+      <button type="button" id="navPrev">◀ ก่อนหน้า</button>
+      <div id="navTxt"></div>
+      <button type="button" id="navNext" class="primary">ถัดไป ▶</button>
+    </div>
+    <div class="navrow2"><div id="navDots"></div><div><button type="button" id="navRole" class="link">โหมด: ดูเอง</button><button type="button" id="navMode" class="link">แสดงทั้งหมด</button></div></div>
   </div>
 
   <script>
@@ -579,7 +690,279 @@
     const REL_TXT = { "3": ["คู่ฮะ — ดีมาก", "#15803d"], "2": ["สามเหล่า — ดี", "#15803d"], "1": ["ตรงปีเกิด — พอใช้", "#6d6585"], "0": ["ปกติ", "#6d6585"], "-2": ["ชง — ควรเลี่ยงเรื่องสำคัญ", "#b91c1c"] };
     const pad2 = n => String(n).padStart(2, "0");
 
+    // ===== ดวงของหาย (เพื่อความบันเทิง + ขั้นตอนตามหาที่ใช้ได้จริง) =====
+    const LOST = [
+      ["กระเป๋าเงิน/บัตร", ["ย้อนรอยเส้นทางและร้านที่แวะล่าสุด ถามพนักงานหรือแจ้งฝ่ายรับฝากของหาย","หากมีบัตรเครดิต/เดบิต ให้โทรอายัดกับธนาคารทันที ไม่ต้องรอผลดวง","แจ้งความเอกสารหาย และบัตรประชาชนหายโดยทั่วไปต้องขอทำใหม่ภายในเวลาที่กฎหมายกำหนด (ตรวจสอบที่ที่ว่าการอำเภอ/เขต)"]],
+      ["โทรศัพท์มือถือ", ["โทรหาเบอร์ตัวเองและลองเปิดเสียงเรียกจากแอปค้นหาอุปกรณ์ (Find My Device / Find My iPhone)","ล็อกหรือลบข้อมูลเครื่องจากระยะไกลหากหาไม่เจอ","แจ้งผู้ให้บริการระงับซิม และเปลี่ยนรหัสผ่านแอปธนาคารและโซเชียลที่ล็อกอินค้างไว้"]],
+      ["กุญแจ", ["ตรวจกระเป๋าเสื้อผ้าตัวเก่า ใต้เบาะรถ ซอกโซฟา และถังขยะที่เพิ่งทิ้ง","ถามคนในบ้านหรือที่ทำงานว่าเห็นหรือไม่","ถ้ากังวลเรื่องความปลอดภัย ควรเปลี่ยนลูกกุญแจหรือกุญแจชุดสำรอง"]],
+      ["เอกสารสำคัญ", ["ค้นแฟ้มและกระเป๋าที่ใช้ล่าสุด และถามหน่วยงานที่ยื่นเอกสารล่าสุด","แจ้งความเอกสารหายและขอใบแทนจากหน่วยงานที่ออกเอกสาร","เก็บสำเนา/ถ่ายภาพเอกสารสำคัญไว้ล่วงหน้าในอนาคต"]],
+      ["เครื่องประดับ", ["ค้นซอกเตียง กระเป๋าหลายช่อง ตะแกรงท่อน้ำ และถุงขยะก่อนทิ้ง","ถามร้านหรือสถานที่ที่ถอดเครื่องประดับล่าสุด เช่น ห้องน้ำ ฟิตเนส","หากเป็นของมีค่าสูง ตรวจกับประกันหรือใบรับประกัน"]],
+      ["สัตว์เลี้ยง", ["ประกาศในกลุ่มชุมชนและโซเชียลพร้อมรูปและเบอร์ติดต่อ","ติดต่อสัตวแพทย์ ศูนย์พักพิง และเทศบาลในพื้นที่ ตรวจไมโครชิปถ้ามี","ตามหาในช่วงเช้ามืดหรือเย็นที่สัตว์มักออกมา และวางอาหาร/ของที่มีกลิ่นคุ้นเคยไว้ใกล้บ้าน"]],
+      ["ของอื่นๆ", ["ย้อนรอยเส้นทางและกิจกรรมตั้งแต่ครั้งสุดท้ายที่เห็นของ","ถามคนที่อยู่ในเหตุการณ์ และสอบถามสถานที่ที่ไปล่าสุด","ปิดประกาศหรือแจ้งเจ้าหน้าที่ของสถานที่นั้น พร้อมเบอร์ติดต่อ"]]
+    ];
+    const LOST_WHO = ["อยู่กับตัวเองหรือลืมไว้ในที่คุ้นเคย (บ้าน รถ ที่ทำงาน)","คนในครอบครัวหรือคนใกล้ชิดอาจเก็บไว้ให้โดยไม่ได้บอก","เพื่อนหรือเพื่อนร่วมงานที่ผ่านมาเห็นและเก็บไว้","คนแปลกหน้าใจดีที่เก็บได้และอาจส่งคืน","ตกหล่นในยานพาหนะหรือสถานที่สาธารณะ มีเจ้าหน้าที่เก็บไว้","หล่นในที่ลับตา เช่น ใต้เบาะ ซอกเตียง หรือหลังตู้"];
+    const LOST_RES = [
+      ["โอกาสต่ำ ควรเตรียมใจและรีบป้องกันความเสียหาย", "ไม่ชัดเจน"],
+      ["ได้คืนยาก ต้องพึ่งการประกาศและแจ้งหน่วยงาน", "ประมาณ 1 เดือนหรือนานกว่า"],
+      ["ครึ่งๆ กลางๆ ต้องตามหาอย่างจริงจังและใช้เวลา", "ประมาณ 1–2 สัปดาห์"],
+      ["มีโอกาสได้คืนค่อนข้างดี", "ประมาณ 3–7 วัน"],
+      ["มีโอกาสได้คืนสูง น่าจะอยู่ไม่ไกลจากตัว ✨", "ภายในประมาณ 1–3 วัน"]
+    ];
+
+    // ===== ดวงเฉพาะเรื่อง / ครอบครัว / ชง / เลขเบอร์ / ตลอดชีวิต =====
+    const TOPICS = [
+      { k: "job", ic: "💼", name: "เปลี่ยนงาน/ลาออก", salt: 1,
+        hi: "เหมาะเริ่มหางานใหม่ ส่งเรซูเม่ หรือเจรจาปรับตำแหน่ง", mid: "เตรียมตัว อัปเดตเรซูเม่ ขยายคอนเนคชัน", lo: "ควรรอ ไม่เหมาะตัดสินใจลาออกโดยไม่มีงานใหม่รองรับ",
+        tips: ["โดยทั่วไปควรมีงานใหม่ที่ยืนยันแล้ว และเงินสำรองเผื่อไว้หลายเดือนก่อนลาออก", "อ่านสัญญาจ้าง เงื่อนไขการลาออก และสิทธิประโยชน์ให้ครบก่อนตัดสินใจ", "ดวงเป็นเพียงข้อคิดประกอบ การตัดสินใจควรอิงข้อมูลจริงของตัวคุณเป็นหลัก"] },
+      { k: "study", ic: "🎓", name: "เรียน/สอบ/ต่อต่างประเทศ", salt: 2,
+        hi: "เหมาะสมัครสอบ ยื่นทุน หรือเตรียมเอกสารต่อต่างประเทศ", mid: "ทบทวนเนื้อหาและเตรียมเอกสารให้พร้อม", lo: "เน้นปูพื้นฐานและพักผ่อนให้พอ อย่ากดดันตัวเองเกินไป",
+        tips: ["ตรวจกำหนดการสมัครและเงื่อนไขจริงจากเว็บไซต์ของสถาบันเสมอ", "สำหรับต่างประเทศ ควรเตรียมวีซ่า ค่าใช้จ่าย และประกันสุขภาพล่วงหน้า", "การเตรียมตัวสม่ำเสมอสำคัญกว่าฤกษ์ดีวันเดียว"] },
+      { k: "biz", ic: "🏪", name: "ธุรกิจ/เปิดร้าน", salt: 3,
+        hi: "เหมาะวางแผน เปิดตัวร้านหรือขยายกิจการเล็กๆ อย่างรอบคอบ", mid: "ศึกษาตลาด ทดลองในขนาดเล็กก่อน", lo: "ควรชะลอการลงทุนก้อนใหญ่ และทบทวนแผนการเงิน",
+        tips: ["นี่ไม่ใช่คำแนะนำการลงทุน ควรทำแผนธุรกิจ ศึกษาตลาด และคำนวณจุดคุ้มทุนก่อนเสมอ", "หลีกเลี่ยงการกู้เกินตัว และระวังคำชวนลงทุนที่สัญญาผลตอบแทนสูงเกินจริง", "ตรวจใบอนุญาตและกฎหมายที่เกี่ยวข้องกับธุรกิจนั้นให้ครบ"] },
+      { k: "move", ic: "🏠", name: "ย้ายบ้าน/ฮวงจุ้ย", salt: 4,
+        hi: "เหมาะดูบ้าน ทำสัญญา หรือย้ายเข้าอยู่", mid: "สำรวจและเปรียบเทียบตัวเลือกให้รอบด้าน", lo: "ควรชะลอการตัดสินใจเรื่องสัญญาใหญ่ๆ",
+        tips: ["ตรวจสภาพบ้าน เอกสารสิทธิ์ และเงื่อนไขสัญญาให้ละเอียด ไม่ควรตัดสินใจเรื่องเงินก้อนใหญ่เพราะดวงอย่างเดียว", "ฮวงจุ้ยเป็นความเชื่อ การจัดบ้านให้โล่ง สว่าง ระบายอากาศดี ช่วยให้อยู่สบายจริง", "ทิศที่แนะนำเป็นเพียงแนวทางสนุกๆ ไม่ใช่ข้อบังคับ"] },
+      { k: "trip", ic: "✈️", name: "เดินทาง/ต่างประเทศ", salt: 5,
+        hi: "เหมาะวางแผนหรือออกเดินทางท่องเที่ยว/ไปต่างประเทศ", mid: "วางแผนเส้นทางและงบให้พร้อม", lo: "เผื่อเวลาและงบมากขึ้น ระวังความประมาทระหว่างเดินทาง",
+        tips: ["ตรวจอายุหนังสือเดินทาง วีซ่า และกฎเข้าเมืองจากแหล่งทางการก่อนเดินทาง", "ซื้อประกันการเดินทาง ถ่ายสำเนาเอกสารสำคัญเก็บแยกไว้", "ขับขี่ปลอดภัย และไม่ควรเลื่อนการรักษาพยาบาลเพราะดวงหรือยาม"] }
+    ];
+    const DIRMAP = { "ไฟ": "ใต้", "ดิน": "ตะวันตกเฉียงใต้", "ลม": "ตะวันออก", "น้ำ": "เหนือ" };
+    const mstar = (seed, salt, cy0, mo) => Math.min(5, Math.floor(seeded(seed * 7 + (cy0 * 12 + mo) * 13 + salt * 977, 600 + salt) * 5) + 1);
+    const PARENT9 = [
+      "เน้นกฎระเบียบและความถูกต้อง ควรเผื่อพื้นที่ให้ลูกผิดพลาดและเรียนรู้",
+      "ใจดี ดูแลใกล้ชิด ระวังตามใจหรือคาดหวังการตอบแทนทางใจจากลูกมากเกินไป",
+      "สนับสนุนให้ลูกมุ่งมั่นและประสบความสำเร็จ ระวังกดดันเรื่องผลลัพธ์จนลืมความรู้สึก",
+      "เข้าใจความรู้สึกลูกลึกซึ้ง ส่งเสริมความคิดสร้างสรรค์ ระวังอารมณ์แปรปรวนส่งผลต่อบ้าน",
+      "ให้พื้นที่ส่วนตัวและใช้เหตุผล ระวังห่างเหินทางอารมณ์ ควรใช้เวลาอยู่ด้วยกันให้มากขึ้น",
+      "รักและปกป้องลูก สร้างความมั่นคงให้ครอบครัว ระวังกังวลมากเกินไปจนลูกอึดอัด",
+      "สนุก เปิดโลกใหม่ให้ลูก ระวังเปลี่ยนแผนบ่อยจนลูกขาดความสม่ำเสมอ",
+      "ปกป้องครอบครัวอย่างเข้มแข็ง ระวังควบคุมเข้มงวดเกินไป ควรฟังเสียงลูก",
+      "ใจเย็น เป็นที่พึ่งทางใจ ระวังเลี่ยงความขัดแย้งจนลูกไม่เห็นตัวอย่างการแก้ปัญหา"
+    ];
+    const NUM9 = ["", "ผู้นำ เป็นตัวของตัวเอง ริเริ่ม", "ความร่วมมือ ละเอียดอ่อน ประนีประนอม", "สร้างสรรค์ สื่อสาร ร่าเริง",
+      "มั่นคง มีระเบียบ ทำงานหนัก", "อิสระ เปลี่ยนแปลง ชอบประสบการณ์ใหม่", "ครอบครัว ความรับผิดชอบ ดูแลผู้อื่น",
+      "ปัญญา ช่างคิด ลึกซึ้ง", "ความสำเร็จ อำนาจ การเงิน", "เมตตา อุดมคติ ให้ผู้อื่น"];
+    const reduce9 = n => { while (n > 9) n = String(n).split("").reduce((a, c) => a + Number(c), 0); return n; };
+    const STR6 = ["ความซื่อตรงและยุติธรรม", "ความเข้าอกเข้าใจผู้อื่น", "ความสามารถในการเข้าสังคม", "ความใจเย็นและยืดหยุ่น", "ความรับผิดชอบและวินัย", "ความช่างคิดและกล้าลองสิ่งใหม่"];
+    const STAGES = [
+      { n: "วัยเด็ก", a: 0, b: 12, t: "เรียนรู้พื้นฐานชีวิต ครอบครัวมีผลต่อการหล่อหลอมนิสัย", c: "ระวังความกดดันเรื่องการเรียนและอุบัติเหตุจากความซน" },
+      { n: "วัยรุ่น", a: 13, b: 21, t: "ค้นหาตัวตน เรียนรู้เรื่องเพื่อนและความรัก", c: "ระวังอารมณ์แปรปรวนและการตามกระแสเพื่อนโดยไม่คิด" },
+      { n: "วัยสร้างตัว", a: 22, b: 35, t: "เริ่มต้นการงาน สร้างรายได้ ตั้งหลักปักฐาน และอาจเริ่มชีวิตคู่", c: "ระวังใช้จ่ายเกินตัวและทำงานหนักจนสุขภาพทรุด" },
+      { n: "วัยสร้างความมั่นคง", a: 36, b: 50, t: "เติบโตในหน้าที่การงาน ดูแลครอบครัวและผู้ใหญ่ ความรับผิดชอบสูงสุด", c: "ระวังความเครียดสะสม โรคจากไลฟ์สไตล์ และเวลาให้ครอบครัวไม่พอ" },
+      { n: "วัยก่อนสูงอายุ", a: 51, b: 60, t: "ถ่ายทอดประสบการณ์ วางแผนเกษียณ และหันมาดูแลสุขภาพจริงจัง", c: "ระวังสุขภาพและการเงินหลังเกษียณ ควรตรวจสุขภาพประจำปี" },
+      { n: "วัยสูงอายุ", a: 61, b: 200, t: "ใช้ชีวิตอย่างสงบ ใกล้ชิดครอบครัว ทำงานอดิเรกและทำสิ่งที่รัก", c: "ระวังการหกล้ม โรคประจำตัว และความเหงา ควรมีคนดูแลใกล้ชิดและพบแพทย์สม่ำเสมอ" }
+    ];
+
     const $ = id => document.getElementById(id);
+    // ===== โหมดอ่านทีละบท (เหมาะให้หมอดูค่อยๆ เล่าทีละเรื่อง) =====
+    let chIdx = 0, allMode = false;
+    const chapters = () => [...document.querySelectorAll(".chapter")];
+    function renderNav() {
+      const cs = chapters();
+      $("navTxt").textContent = allMode ? "แสดงทุกบท" : `บทที่ ${chIdx + 1}/${cs.length} · ${cs[chIdx].dataset.title}`;
+      $("navPrev").disabled = allMode || chIdx === 0;
+      $("navNext").disabled = allMode || chIdx === cs.length - 1;
+      $("navMode").textContent = allMode ? "อ่านทีละบท" : "แสดงทั้งหมด";
+      $("navFill").style.width = (allMode ? 100 : (chIdx + 1) / cs.length * 100) + "%";
+      $("navDots").replaceChildren(...cs.map((c, k) => { const i = document.createElement("i"); i.title = c.dataset.title; if (k === chIdx && !allMode) i.className = "on"; i.onclick = () => { allMode = false; showCh(k); }; return i; }));
+    }
+    function showCh(i, scroll = true) {
+      const cs = chapters(); chIdx = Math.max(0, Math.min(i, cs.length - 1));
+      cs.forEach((c, k) => { c.style.display = (allMode || k === chIdx) ? "block" : "none"; c.classList.remove("in"); if (allMode || k === chIdx) { void c.offsetWidth; c.classList.add("in"); } });
+      renderNav();
+      if (scroll) { const t = allMode ? $("result") : cs[chIdx]; t.scrollIntoView({ behavior: "smooth", block: "start" }); }
+    }
+    function startReading() { allMode = false; $("nav").style.display = "flex"; document.body.classList.add("reading"); buildScripts(); showCh(0); }
+    $("navPrev").onclick = () => showCh(chIdx - 1);
+    $("navNext").onclick = () => showCh(chIdx + 1);
+    $("navMode").onclick = () => { allMode = !allMode; showCh(chIdx, false); if (allMode) $("result").scrollIntoView({ behavior: "smooth", block: "start" }); };
+    document.addEventListener("keydown", e => {
+      if ($("result").style.display !== "block" || allMode || /^(INPUT|SELECT|TEXTAREA)$/.test((e.target.tagName || ""))) return;
+      if (e.key === "ArrowRight") showCh(chIdx + 1); else if (e.key === "ArrowLeft") showCh(chIdx - 1);
+    });
+
+    // ===== โหมดหมอดู: คำพูดแนะนำรายบท (เน้นพูดอย่างซื่อตรง น่าเชื่อถือ ไม่รับประกัน ไม่ขู่) =====
+    let role = "self";
+    try { const sv = localStorage.getItem("fortune-role"); if (sv === "reader" || sv === "self") { role = sv; document.querySelector(`input[name="mode"][value="${sv}"]`).checked = true; } } catch (e) {}
+    const GOLD_RULES = [
+      "ฟังก่อนพูด — ถามคำถามเปิดเพื่อให้ลูกดวงได้เล่า คนจะเชื่อถือคนที่ฟังเขาจริง",
+      "ใช้ภาษา “แนวโน้ม” — เช่น “ตามตำรามักจะ…” “ช่วงนี้เป็นจังหวะที่…” ไม่ฟันธงว่า “จะต้องเกิด…”",
+      "พูดทั้งข้อดีและข้อควรระวัง — ชมอย่างเดียวฟังเป็นการเอาใจ ข้อควรระวังหนึ่งข้อพร้อมทางออกทำให้น่าเชื่อถือกว่า",
+      "ให้ทางออกที่ทำได้จริง — เช่น จดบัญชี ตรวจสุขภาพ อ่านสัญญา ไม่ใช่การซื้อเครื่องรางหรือทำพิธีเสียเงิน",
+      "ให้ลูกดวงเป็นผู้ยืนยัน — ถามว่า “ตรงไหมคะ/ครับ” แล้วปรับน้ำหนักตามที่เขาตอบ",
+      "รู้ขอบเขต — เรื่องสุขภาพ กฎหมาย การเงินจริงจัง ให้แนะนำพบผู้เชี่ยวชาญ ห้ามทำนายอายุขัยหรือโรคร้าย"
+    ];
+    const aNm = k => ANIMAL[k].split(" ")[0];
+    const SCRIPTS = [
+      c => ({ open: `จากวันเกิดที่คุณให้มา คือ${c.dayName} ราศี${c.z[0]} ปี${aNm(c.ai)} ตามตำรามักจะออกมาเป็นแนว “${c.P.type}” นะคะ/ครับ`,
+        say: [`ขอเล่าเป็นแนวโน้มนะคะ/ครับ ไม่ได้ฟันธง ตรงหรือไม่ตรงตรงไหนบอกได้เลย`, `คนที่เกิดวันนี้มักถูกมองว่า ${c.P.persona}`],
+        ask: "ฟังแล้วตรงกับตัวคุณไหม ข้อไหนตรงที่สุด ข้อไหนไม่ตรง",
+        careful: "อย่าอ้างว่ารู้ลึกกว่าที่ข้อมูลบอก ให้ลูกดวงเป็นคนยืนยันเอง และอย่าเดาเรื่องส่วนตัวที่เขาไม่ได้เล่า", intro: true }),
+      c => ({ open: `ต่อไปขอดูลึกลงไปอีกชั้น คุณมักเป็นคนแบบ “${c.n9[0]}” และมีลักษณะเด่นคือ “${T20[c.gi]}”`,
+        say: [`จุดแข็งของคุณคือ ${STR6[c.top6]} แต่ทุกจุดแข็งมีด้านที่ต้องระวังเสมอ`, "เล่าจุดแข็งก่อน แล้วตามด้วยข้อควรระวัง 1 ข้อ คนฟังจะรู้สึกว่าได้ข้อมูลรอบด้านและน่าเชื่อถือกว่าชมอย่างเดียว"],
+        ask: "ช่วงนี้คุณรู้สึกว่าได้ใช้จุดแข็งข้อนี้เต็มที่หรือยัง",
+        careful: "หลีกเลี่ยงการตัดสินว่าใครเป็นคนดีหรือไม่ดี ใช้คำว่า “แนวโน้ม” และเล่าด้านที่ควรพัฒนาอย่างให้เกียรติ" }),
+      c => ({ open: "ขอดูโหวงเฮ้งเป็นส่วนเสริมนะคะ/ครับ ต้องได้รับอนุญาตและความสบายใจจากลูกดวงก่อนใช้รูปใบหน้า",
+        say: ["บอกก่อนว่าเป็นการดูลักษณะกว้างๆ ตามความเชื่อ ไม่ใช้ตัดสินนิสัยหรือความสามารถของใคร", "ชวนลูกดวงส่องกระจกและบอกเองว่าจุดเด่นบนใบหน้าคือส่วนไหน แล้วค่อยเสริมด้วยตำรา"],
+        ask: "เวลาส่องกระจก คุณรู้สึกว่าส่วนไหนของหน้าเป็นจุดเด่นของตัวเอง",
+        careful: "ห้ามพูดเชิงลบเรื่องรูปร่างหน้าตา ห้ามเหมารวมตามเชื้อชาติ เพศ หรืออายุ ห้ามทายโรคจากใบหน้า และห้ามถ่ายหรือเก็บรูปลูกดวงโดยไม่ได้รับอนุญาต" }),
+      c => { const S = STAGES.find(x => c.age >= x.a && c.age <= x.b) || STAGES[STAGES.length - 1];
+        return { open: `ตอนนี้คุณอยู่ช่วง “${S.n}” (อายุประมาณ ${c.age} ปี) ช่วงนี้ตามตำรามักมีธีมคือ ${S.t}`,
+          say: ["เล่าช่วงที่ผ่านมาแล้วสั้นๆ ให้ลูกดวงพยักหน้าก่อน แล้วค่อยพูดถึงช่วงปัจจุบันและอนาคต", "พูดถึงอนาคตเป็น “แนวทางและทางเลือก” ไม่ใช่ชะตาที่เปลี่ยนไม่ได้"],
+          ask: "ช่วงชีวิตที่ผ่านมา ช่วงไหนที่คุณรู้สึกว่าเปลี่ยนแปลงมากที่สุด",
+          careful: "ห้ามทำนายอายุขัยหรือวันสิ้นอายุ ห้ามขู่เรื่องโรคร้ายหรืออุบัติเหตุร้ายแรง" }; },
+      c => ({ open: "ในปีนี้และเดือนนี้ ขอแยกเป็นเรื่องที่ควรเด่น กับเรื่องที่ควรระวังนะคะ/ครับ",
+        say: ["เริ่มจากด้านที่ดาวสูงเพื่อให้กำลังใจ แล้วค่อยพูดด้านที่ต้องระวังพร้อมวิธีรับมือที่ทำได้จริง เช่น เรื่องเงินให้จดบัญชี เรื่องสุขภาพให้ตรวจประจำปี", "ใช้ประโยค “ช่วงนี้เป็นจังหวะที่…” แทน “จะต้องเกิด…”"],
+        ask: "ตอนนี้เรื่องไหนที่คุณกังวลที่สุด จะได้เน้นให้ตรงจุด",
+        careful: "ถ้าลูกดวงเล่าเรื่องสุขภาพหรือกฎหมายจริงจัง ให้แนะนำพบแพทย์/ผู้เชี่ยวชาญก่อน ไม่ใช้ดวงแทน" }),
+      c => ({ open: "เรื่องที่คนอยากรู้ที่สุดคือการงาน การเงิน และความรัก ขอดูทีละเรื่องนะคะ/ครับ",
+        say: [`ด้านอาชีพ ลักษณะของคุณเข้ากับงานแนว ${CAREER9[c.ni]}`, "เรื่องความรัก พูดถึงสไตล์การรักและสิ่งที่ควรปรับ ไม่ตัดสินว่าคู่คนใดดีหรือไม่ดี", "เรื่องเงิน เน้นวินัยการเงินและแผนสำรอง ไม่แนะนำการลงทุนหรือเลขเด็ด"],
+        ask: "ตอนนี้คุณอยู่ในช่วงตัดสินใจเรื่องอะไรเป็นพิเศษไหม (งาน ย้ายที่ ความสัมพันธ์)",
+        careful: "ไม่ชี้ว่าคนใกล้ตัวเป็นต้นเหตุปัญหา ไม่แนะนำให้เลิกกับคู่หรือลาออกเพราะดวง" }),
+      c => { const t = new Date(), dA = dayAnimal(t), rl = relOf(c.ai, dA);
+        return { open: `เรื่องจังหวะเวลา ปีเกิดคุณคือปี${aNm(c.ai)} ส่วนวันนี้เป็นวัน${aNm(dA)} ซึ่งความสัมพันธ์คือ “${REL_TXT[String(rl)][0]}”`,
+          say: ["อธิบายหลักง่ายๆ ว่าปีนักษัตรของคนกับของวัน/ยามเข้ากันหรือไม่ ทำให้ฟังเป็นระบบและตรวจสอบได้", "ย้ำว่าฤกษ์ยามเป็นแนวทางประกอบ ไม่ใช่ข้อห้ามเด็ดขาด"],
+          ask: "มีเรื่องสำคัญที่วางแผนไว้ในเดือนนี้ไหม เช่น เดินทาง เซ็นสัญญา",
+          careful: "เรื่องสุขภาพ การรักษาพยาบาล และธุระเร่งด่วน ห้ามเลื่อนเพราะยามไม่ดี" }; },
+      c => { const t = new Date(); t.setHours(0, 0, 0, 0); const ti = dayInfo(c.fseed, t);
+        return { open: `สำหรับวันนี้ สีเสื้อนำโชคคือสี${ti.good[0]} ส่วนสีที่ควรเลี่ยงคือสี${ti.bad[0]}`,
+          say: ["บอกว่าสีเสื้อช่วยให้ “สบายใจและมั่นใจขึ้น” เป็นหลัก ไม่ได้บังคับชะตา", "ดวงรายวันเป็นกำลังใจเล็กๆ ไม่ต้องจริงจัง"],
+          ask: "วันนี้มีนัดหรืองานสำคัญไหม จะได้แนะนำให้เหมาะ",
+          careful: "ไม่อ้างว่าสีกาลกิณีทำให้เกิดเรื่องร้าย" }; },
+      c => ({ open: "เรื่องโชคลาภและเลขมงคล ขอพูดตรงๆ ก่อนว่าเป็นเรื่องความสนุกและกำลังใจนะคะ/ครับ",
+        say: ["บอกตรงๆ ว่าโอกาสถูกสลากจริงคือ 1 ใน 1,000,000 ไม่ขึ้นกับดวง ลูกดวงจะไว้ใจคุณมากกว่าหมอดูที่รับประกันโชค", "ส่วนของหาย ให้แนะนำขั้นตอนตามหาที่ทำได้จริงก่อน เช่น อายัดบัตร ระงับซิม แล้วค่อยพูดเรื่องทิศเป็นแนวทางสนุกๆ"],
+        ask: "มีของหายหรือเรื่องที่ค้างคาใจอยู่ไหม",
+        careful: "ห้ามรับประกันถูกรางวัล ห้ามชี้ตัวคนว่าเอาของไป ห้ามขายเลขหรือเครื่องรางเสริมดวง" }),
+      c => ({ open: `สรุปให้ฟังอีกครั้ง คุณเป็นคนแนว “${c.P.type}” จุดแข็งคือ ${STR6[c.top6]}`,
+        say: ["ปิดด้วยสิ่งที่ลูกดวงทำได้จริงสัก 1–3 ข้อ พร้อมกำลังใจ", "ย้ำว่าอนาคตขึ้นกับการตัดสินใจของตัวคุณเอง ดวงเป็นเพียงข้อคิด"],
+        ask: "มีเรื่องไหนที่อยากให้อธิบายเพิ่มไหม",
+        careful: "ไม่เร่งให้ตัดสินใจ และไม่ชวนมาดูครั้งต่อไปด้วยการขู่ว่าจะมีเรื่องร้าย" })
+    ];
+    // ===== โหวงเฮ้ง: วิเคราะห์ใบหน้าในเบราว์เซอร์ (ไม่อัปโหลด ไม่บันทึก) =====
+    const FACE_CDN = "https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/";
+    let faceReady = null, faceRes = null;
+    function loadFaceApi() {
+      if (faceReady) return faceReady;
+      faceReady = new Promise((res, rej) => {
+        const sc = document.createElement("script"); sc.src = FACE_CDN + "dist/face-api.js";
+        sc.onload = async () => { try { await faceapi.nets.tinyFaceDetector.loadFromUri(FACE_CDN + "model"); await faceapi.nets.faceLandmark68Net.loadFromUri(FACE_CDN + "model"); res(); } catch (e) { rej(e); } };
+        sc.onerror = () => rej(new Error("โหลดไลบรารีไม่สำเร็จ"));
+        document.head.append(sc);
+      });
+      faceReady.catch(() => { faceReady = null; });
+      return faceReady;
+    }
+    const SHAPES = {
+      "รี": "ใบหน้ารูปไข่/รี — ตามตำรามักเป็นคนละเอียด รอบคอบ ปรับตัวเก่ง อารมณ์สมดุล",
+      "ยาว": "ใบหน้ายาว — ตามตำรามักเป็นคนคิดไกล ใฝ่รู้ ชอบความเป็นระเบียบ ควรหาเวลาผ่อนคลายบ้าง",
+      "กลม": "ใบหน้ากลม — ตามตำรามักเป็นคนอบอุ่น เป็นกันเอง เข้าสังคมง่าย ใจอ่อน",
+      "เหลี่ยม": "ใบหน้าเหลี่ยม — ตามตำรามักเป็นคนหนักแน่น มุ่งมั่น มีความเป็นผู้นำ ควรระวังความดื้อ"
+    };
+    function faceReading(L) {
+      const P = L.positions, dist = (a, b) => Math.hypot(P[a].x - P[b].x, P[a].y - P[b].y);
+      const fw = dist(0, 16), browY = (P[19].y + P[24].y) / 2;
+      const fh = Math.hypot((P[19].x + P[24].x) / 2 - P[8].x, browY - P[8].y);
+      const shapeR = fh / fw, jawR = dist(4, 12) / fw;
+      const shape = shapeR > 1.12 ? "ยาว" : jawR > 0.74 ? "เหลี่ยม" : shapeR >= 0.98 ? "รี" : "กลม";
+      const midH = Math.abs(P[33].y - browY), lowH = Math.abs(P[8].y - P[33].y), zone = midH / lowH;
+      const eyeW = (dist(36, 39) + dist(42, 45)) / 2, eyeGap = dist(39, 42) / eyeW;
+      const mouthR = dist(48, 54) / fw;
+      const lines = [
+        ["รูปหน้า", SHAPES[shape]],
+        ["สัดส่วนหน้า", zone > 1.1 ? "ช่วงกลางใบหน้าเด่น — ตามตำราหมายถึงวัยกลางคนที่ขยันสร้างตัว" : zone < 0.9 ? "ช่วงล่างใบหน้าเด่น — ตามตำราหมายถึงความมั่นคงและใจเย็นในช่วงหลังของชีวิต" : "กลางหน้าและส่วนล่างสมดุล — ตามตำราหมายถึงความมั่นคงสม่ำเสมอ"],
+        ["ระยะห่างดวงตา", eyeGap > 1.12 ? "ตาค่อนข้างห่าง — มักใจกว้าง มองภาพรวมได้ดี" : eyeGap < 0.95 ? "ตาค่อนข้างชิด — มักละเอียด จดจ่อกับรายละเอียด" : "ระยะตาสมดุล — มักมองได้ทั้งภาพรวมและรายละเอียด"],
+        ["ปาก", mouthR > 0.38 ? "ปากกว้าง — มักช่างพูด เข้าสังคมเก่ง" : mouthR < 0.32 ? "ปากค่อนข้างเล็ก — มักละเอียดอ่อน พูดอย่างระมัดระวัง" : "ปากขนาดพอดี — มักพูดจาสุภาพและรู้จังหวะ"]
+      ];
+      return { shape, lines, m: { shapeR, jawR, zone, eyeGap, mouthR } };
+    }
+    function renderFaceChapter() {
+      const q = (l, t) => { const e1 = el("p", "kv"); e1.append(el("b", null, l), document.createTextNode(t)); return e1; };
+      const nt2 = el("p", "kv", "* โหวงเฮ้งเป็นความเชื่อโบราณเพื่อความบันเทิง ไม่ใช่วิทยาศาสตร์ ไม่ใช้ตัดสินนิสัย ความซื่อสัตย์ สุขภาพ หรือความสามารถของใคร และไม่ควรใช้ประกอบการจ้างงานหรือตัดสินคน");
+      nt2.style.cssText = "font-size:13px;color:#b45309;margin-top:10px";
+      $("rFace").replaceChildren(el("h3", null, "🪞 โหวงเฮ้งของคุณ"), ...faceRes.lines.map(([a, b]) => q(a + ": ", b)),
+        el("p", "kv", faceRes.src === "photo" ? "วัดจากรูปที่คุณให้ไว้ (ประมวลผลในเครื่อง ไม่ถูกอัปโหลด) เป็นค่าประมาณที่อาจคลาดเคลื่อนตามมุมกล้องและแสง" : "คุณเลือกรูปหน้าเอง จึงดูแบบกว้างๆ จากรูปหน้าอย่างเดียว"), nt2);
+    }
+    function initFace() {
+      const box = $("faceForm"); if (!box) return;
+      const mk2 = (label, txt) => { const q = el("p", "kv"); q.append(el("b", null, label), document.createTextNode(txt)); return q; };
+      const consent = el("input"); consent.type = "checkbox"; consent.style.cssText = "width:auto;margin-right:8px;accent-color:#b8862b";
+      const cl = el("label"); cl.style.cssText = "display:block;font-size:14px;color:var(--ink);font-weight:500;margin:8px 0;cursor:pointer";
+      cl.append(consent, document.createTextNode("ฉันยินยอมให้ประมวลผลรูปใบหน้าของฉันในเบราว์เซอร์นี้เพื่อดูโหวงเฮ้ง โดยรูปไม่ถูกอัปโหลด ไม่ถูกบันทึก และใช้เฉพาะรูปของตนเองหรือของผู้ที่อนุญาต (หากอายุไม่ถึง 20 ปี ควรได้รับความยินยอมจากผู้ปกครอง)"));
+      const inp = el("input"); inp.type = "file"; inp.accept = "image/*"; inp.setAttribute("capture", "user");
+      inp.style.cssText = "padding:10px;border-radius:10px;border:1px solid #d6bf84;background:#fffdf6;font:inherit;width:100%";
+      const status = el("p", "kv"); status.style.cssText = "min-height:1.4em;font-size:14px;color:#8a4a0a";
+      const prev = el("img"); prev.style.cssText = "display:none;max-width:150px;max-height:190px;border-radius:10px;border:1px solid #d6bf84;margin:6px 0";
+      prev.alt = "รูปตัวอย่างที่เลือก (อยู่ในเครื่องของคุณเท่านั้น)";
+      const res = el("div");
+      const delBtn = el("button", null, "🗑️ ลบรูปและผลวิเคราะห์"); delBtn.type = "button"; delBtn.style.cssText = "display:none;width:auto;padding:6px 14px;font-size:14px;margin-top:6px;cursor:pointer";
+      const clear = () => { if (prev.src) { URL.revokeObjectURL(prev.src); } prev.removeAttribute("src"); prev.style.display = "none"; res.replaceChildren(); status.textContent = ""; inp.value = ""; delBtn.style.display = "none"; faceRes = null; };
+      delBtn.onclick = clear;
+      inp.onchange = async () => {
+        const f = inp.files && inp.files[0]; if (!f) return;
+        if (!consent.checked) { status.textContent = "กรุณาติ๊กยินยอมก่อนเลือกรูป"; inp.value = ""; return; }
+        if (!/^image\//.test(f.type)) { status.textContent = "กรุณาเลือกไฟล์รูปภาพ"; inp.value = ""; return; }
+        if (f.size > 12 * 1024 * 1024) { status.textContent = "ไฟล์ใหญ่เกินไป (ไม่เกิน 12 MB)"; inp.value = ""; return; }
+        faceRes = null;
+        res.replaceChildren(); status.textContent = "กำลังเตรียมตัววิเคราะห์ (ครั้งแรกอาจใช้เวลาสักครู่)…";
+        prev.src = URL.createObjectURL(f); prev.style.display = "block"; delBtn.style.display = "inline-block";
+        try {
+          await loadFaceApi();
+          await new Promise((ok, no) => { if (prev.complete && prev.naturalWidth) ok(); else { prev.onload = ok; prev.onerror = () => no(new Error("อ่านรูปไม่ได้")); } });
+          const dets = await faceapi.detectAllFaces(prev, new faceapi.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.5 })).withFaceLandmarks();
+          if (dets.length === 0) { status.textContent = "ไม่พบใบหน้าในรูป ลองใช้รูปที่หันหน้าตรง แสงพอ และเห็นหน้าชัด แล้วลองอีกครั้ง"; return; }
+          if (dets.length > 1) { status.textContent = "พบหลายใบหน้า กรุณาใช้รูปเดี่ยวของตนเองหรือผู้ที่อนุญาตเท่านั้น"; return; }
+          const r = faceReading(dets[0].landmarks);
+          faceRes = { shape: r.shape, lines: r.lines, src: "photo" };
+          status.textContent = "วิเคราะห์เสร็จแล้ว (ประมวลผลในเครื่องของคุณ)";
+          res.replaceChildren(...r.lines.map(([a, b]) => mk2(a + ": ", b)),
+            el("p", "kv", `ค่าที่วัดได้โดยประมาณ: สัดส่วนหน้า ${r.m.shapeR.toFixed(2)} · กราม/แก้ม ${r.m.jawR.toFixed(2)} · ระยะตา ${r.m.eyeGap.toFixed(2)}`));
+        } catch (e) {
+          status.textContent = "วิเคราะห์อัตโนมัติไม่สำเร็จ (อาจไม่มีอินเทอร์เน็ตสำหรับโหลดโมเดล) โปรดตรวจสอบการเชื่อมต่อแล้วลองใหม่อีกครั้ง";
+        }
+      };
+      const nt = el("p", "kv", "* โหวงเฮ้งเป็นความเชื่อโบราณเพื่อความบันเทิง ไม่มีหลักฐานทางวิทยาศาสตร์ ไม่ใช้ตัดสินนิสัย ความซื่อสัตย์ สุขภาพ หรือความสามารถของใคร และไม่ควรใช้ประกอบการจ้างงานหรือตัดสินคน การวัดจากรูปเป็นค่าประมาณและอาจคลาดเคลื่อนตามมุมกล้อง/แสง ระบบโหลดโมเดลตรวจจับใบหน้าจาก CDN (jsDelivr) แต่ตัวรูปไม่ถูกส่งออกไปที่ใด");
+      nt.style.cssText = "font-size:13px;color:#b45309;margin-top:10px";
+      const ft = el("p", "ft", "🪞 รูปใบหน้า (โหวงเฮ้ง) — ต้องใส่");
+      const fi = el("p", "kv", "ต้องอัปโหลดหรือถ่ายรูปหน้าตรงก่อนจึงจะดูดวงได้ ใช้รูปที่เห็นหน้าชัด แสงพอ ไม่ใส่แว่นดำหรือหน้ากาก ระบบจะวัดสัดส่วนใบหน้าในเครื่องของคุณแล้วลบรูปได้ทุกเมื่อ");
+      const fa = el("p", "kv", "ℹ️ รูปหน้าใช้ในบทโหวงเฮ้งเท่านั้น ไม่ได้ทำให้ผลดวงบทอื่นแม่นขึ้น เพราะผลบทอื่นคำนวณจากวันเดือนปีเกิด");
+      fa.style.color = "#8a4a0a";
+      box.replaceChildren(ft, fi, fa, cl, inp, status, prev, delBtn, res, nt);
+    }
+
+    function buildScripts() {
+      chapters().forEach((ch, k) => {
+        const no = ch.querySelector(".chno"); if (no) no.textContent = `บทที่ ${k + 1}`;
+        const old = ch.querySelector(".scriptbox"); if (old) old.remove();
+        const sc = SCRIPTS[k](cur);
+        const box = el("div", "scriptbox");
+        box.append(el("h4", null, "🎙️ คำพูดสำหรับหมอดู"));
+        const lb = (t) => el("span", "lb", t);
+        box.append(lb("เปิดเรื่อง"), el("q", null, sc.open), lb("พูดแบบนี้ให้น่าเชื่อถือ"));
+        const ul = el("ul"); sc.say.forEach(t => ul.append(el("li", null, t))); box.append(ul);
+        box.append(lb("ถามลูกดวง (ฟังแล้วจึงพูดต่อ)"), el("q", null, sc.ask), el("div", "warn", "⚠️ ระวัง: " + sc.careful));
+        if (sc.intro) {
+          const dt = el("details"); dt.open = true; dt.append(el("summary", null, "หลักการพูดให้น่าเชื่อถืออย่างซื่อตรง 6 ข้อ"));
+          const gl = el("ul"); GOLD_RULES.forEach(t => gl.append(el("li", null, t))); dt.append(gl); box.append(dt);
+        }
+        ch.querySelector(".chhead").after(box);
+      });
+      applyRole();
+    }
+    initFace();
+    function applyRole() {
+      document.querySelectorAll(".scriptbox").forEach(b => b.style.display = role === "reader" ? "block" : "none");
+      $("navRole").textContent = "โหมด: " + (role === "reader" ? "หมอดู" : "ดูเอง");
+    }
+    function setRole(r, rebuild) {
+      role = r; try { localStorage.setItem("fortune-role", r); } catch (e) {}
+      const rd = document.querySelector(`input[name="mode"][value="${r}"]`); if (rd) rd.checked = true;
+      if (rebuild) applyRole();
+    }
+    document.querySelectorAll('input[name="mode"]').forEach(r => r.addEventListener("change", () => setRole(r.value, false)));
+    $("navRole").onclick = () => { setRole(role === "reader" ? "self" : "reader", true); };
+
+
     const nowCE = new Date().getFullYear();
 
     // เติมตัวเลือก
@@ -660,6 +1043,7 @@
       }
       if (dt > new Date()) { err.textContent = "วันเกิดต้องไม่เกินวันนี้"; return; }
 
+      if (!faceRes) { err.textContent = "กรุณาอัปโหลดหรือถ่ายรูปหน้าตรงก่อน (ต้องติ๊กยินยอมและรอให้วิเคราะห์เสร็จ) จึงจะดูดวงได้"; $("faceForm").scrollIntoView({ behavior: "smooth", block: "center" }); return; }
       const hhv = $("hh").value, hasT = hhv !== "", bh = +hhv, mn = +$("mi").value || 0, sex = $("sx").value;
       const wedNight = dt.getDay() === 3 && hasT && bh >= 18;
       const dow = dt.getDay(), P = wedNight ? WED_NIGHT : DAY[dow], z = zodiac(m, d), ai = ((y - 4) % 12 + 12) % 12;
@@ -678,6 +1062,7 @@
       const yam = ANIMAL[Math.floor(((bh + 1) % 24) / 2)].split(" ")[0];
       if (hasT) $("rChips").append(el("span", "chip", `${PERIOD(bh)} · ยาม${yam}`));
       if (sex) $("rChips").append(el("span", "chip", `เพศ${sex}`));
+      $("rChips").append(el("span", "chip", `รูปหน้า${faceRes.shape}`));
       $("rTraits").replaceChildren(
         trait("😊 อารมณ์", P.mood[0], P.mood[1]),
         trait("🧭 นิสัย", P.nature),
@@ -939,6 +1324,149 @@
       );
       $("rH").children[5].style.marginTop = "16px";
 
+      // ===== ดวงของหาย =====
+      const lostSel = el("select"), lostDate = el("input"); lostDate.type = "date";
+      const iso0 = `${today0.getFullYear()}-${pad2(today0.getMonth() + 1)}-${pad2(today0.getDate())}`;
+      lostDate.max = iso0; lostDate.value = iso0;
+      [lostSel, lostDate].forEach(x => x.style.cssText = "padding:10px;border-radius:10px;border:1px solid #d6bf84;background:#fffdf6;font:inherit;width:100%");
+      LOST.forEach((l, i) => lostSel.append(new Option(l[0], i)));
+      const lfrm = el("div"); lfrm.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px";
+      const lb1 = el("label", null, "ของที่หาย"), lb2 = el("label", null, "วันที่หาย");
+      lb1.append(lostSel); lb2.append(lostDate); lfrm.append(lb1, lb2);
+      const lbtn = el("button", "go", "🔍 ดูดวงของหาย"); lbtn.type = "button";
+      const lres = el("div"); lres.style.marginTop = "10px";
+      lbtn.onclick = () => {
+        const dl = lostDate.value ? new Date(lostDate.value + "T00:00:00") : today0;
+        if (dl > today0) { lres.replaceChildren(el("p", "err", "วันที่หายต้องไม่เกินวันนี้")); return; }
+        const ti2 = +lostSel.value, kk = dl.getFullYear() * 10000 + (dl.getMonth() + 1) * 100 + dl.getDate();
+        const sd = fseed * 5 + ti2 * 101 + kk;
+        const st = Math.min(5, Math.floor(seeded(sd, 400) * 5) + 1);
+        const dirL = DIRS[Math.floor(seeded(sd, 401) * DIRS.length)];
+        const whoL = LOST_WHO[Math.floor(seeded(sd, 402) * LOST_WHO.length)];
+        const rs = LOST_RES[st - 1];
+        const row = (label, txt) => { const q = el("p", "kv"); q.append(el("b", null, label), document.createTextNode(txt)); return q; };
+        const stp = el("p", "kv"); const ss = el("span", null, STAR(st)); ss.style.cssText = "color:#c9933b;letter-spacing:2px";
+        stp.append(el("b", null, "โอกาสได้คืน (เชิงสัญลักษณ์): "), ss);
+        const ul = el("ul"); ul.style.cssText = "margin:4px 0 0;padding-left:20px;font-size:14px";
+        LOST[ti2][1].forEach(t => ul.append(el("li", null, t)));
+        const nt = el("p", "kv", "* ผลดวงเป็นความบันเทิงและการเดาสุ่มจากวันเกิดของคุณ ไม่ใช่ข้อเท็จจริง ห้ามนำไปกล่าวหาหรือสงสัยใคร และไม่ควรรอผลดวงโดยไม่ลงมือตามหา ของมีค่า บัตร หรือโทรศัพท์ ควรดำเนินการตามขั้นตอนด้านบนทันที");
+        nt.style.cssText = "font-size:13px;color:#b45309;margin-top:8px";
+        lres.replaceChildren(stp, el("p", "kv", rs[0]), row("ทิศที่ควรเริ่มหา: ", dirL + " (เทียบจากจุดที่คุณหายของหรือที่พักของคุณ)"),
+          row("น่าจะอยู่กับ: ", whoL), row("ระยะเวลาที่น่าจะได้คืน: ", rs[1]),
+          el("p", "kv", "✅ สิ่งที่ควรทำจริง (เริ่มได้ทันที):"), ul, nt);
+        lres.children[7].style.marginTop = "10px";
+      };
+      $("rLost").replaceChildren(el("h3", null, "🔍 ของหาย จะได้คืนไหม อยู่ทิศไหน อยู่กับใคร"), lfrm, lbtn, lres);
+
+      const noteP = (txt) => { const q = el("p", "kv", txt); q.style.cssText = "font-size:13px;color:#b45309;margin-top:10px"; return q; };
+      const smallBtn = (label, onclick) => { const b = el("button", null, label); b.type = "button"; b.style.cssText = "width:auto;padding:6px 14px;font-size:14px;font-weight:600;border-radius:99px;cursor:pointer"; b.onclick = onclick; return b; };
+
+      // ===== ดวงเฉพาะเรื่อง (เลือกหัวข้อ) =====
+      const tBar = el("div"); tBar.style.cssText = "display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px";
+      const tBody = el("div");
+      const showTopic = (idx) => {
+        const T = TOPICS[idx];
+        [...tBar.children].forEach((b, i) => { b.style.background = i === idx ? "#fbe7a8" : "#fffdf6"; b.style.borderColor = i === idx ? "#b8862b" : "#d6bf84"; });
+        const sts = Array.from({ length: 12 }, (_, i) => mstar(fseed, T.salt, cy, i + 1));
+        const order = sts.map((v, i) => [v, i]).sort((a, b) => b[0] - a[0] || a[1] - b[1]).slice(0, 3).map(x => MONTHS[x[1]]);
+        const tb = el("table"); const hr0 = tb.insertRow();
+        ["เดือน", "ระดับ", "คำแนะนำ"].forEach(h => { const c = document.createElement("th"); c.textContent = h; hr0.append(c); });
+        sts.forEach((v, i) => {
+          const tr = tb.insertRow(); if (i + 1 === cm) tr.className = "me";
+          tr.insertCell().textContent = MONTHS[i]; tr.insertCell().textContent = STAR(v);
+          tr.insertCell().textContent = v >= 4 ? T.hi : v === 3 ? T.mid : T.lo;
+        });
+        const sc = el("div"); sc.style.overflowX = "auto"; sc.append(tb);
+        const ul = el("ul"); ul.style.cssText = "margin:4px 0 0;padding-left:20px;font-size:14px";
+        T.tips.forEach(t => ul.append(el("li", null, t)));
+        const nodes = [mk2(`เดือนที่โดดเด่นของปี พ.ศ. ${cy + 543}: `, order.join(", ")), sc];
+        if (T.k === "move") {
+          nodes.push(mk2("ทิศบ้านที่น่าสนใจ (ตามธาตุราศี" + z[0] + "): ", `${DIRMAP[z[2]]} (ธาตุ${z[2]})`));
+        }
+        if (T.k === "trip") {
+          const good = [], bad = [];
+          for (let i = 0; i < 14; i++) {
+            const dd = new Date(today0); dd.setDate(dd.getDate() + i);
+            const rl = relOf(ai, dayAnimal(dd));
+            const lb = dd.toLocaleDateString("th-TH", { weekday: "short", day: "numeric", month: "short" });
+            if (rl >= 2) good.push(lb); else if (rl === -2) bad.push(lb);
+          }
+          nodes.push(mk2("วันที่เหมาะออกเดินทางใน 14 วันข้างหน้า: ", good.join(", ") || "-"), mk2("วันชง ควรเผื่อเวลาเป็นพิเศษ: ", bad.join(", ") || "-"));
+        }
+        nodes.push(el("p", "kv", "✅ ข้อแนะนำที่ใช้ได้จริง:"), ul, noteP("* เพื่อความบันเทิงและข้อคิดทั่วไป ไม่ใช่คำแนะนำด้านอาชีพ การเงิน การลงทุน กฎหมาย หรือการแพทย์"));
+        tBody.replaceChildren(...nodes);
+      };
+      TOPICS.forEach((T, i) => tBar.append(smallBtn(`${T.ic} ${T.name}`, () => showTopic(i))));
+      $("rT").replaceChildren(el("h3", null, "🧭 ดวงเฉพาะเรื่อง (เลือกหัวข้อ)"), tBar, tBody);
+      showTopic(0);
+
+      // ===== ครอบครัวและลูก (ไม่ทายเพศลูก/ฤกษ์คลอด) =====
+      $("rFam").replaceChildren(
+        el("h3", null, "👨‍👩‍👧 ครอบครัวและลูก"),
+        mk2(`สไตล์การเป็นพ่อแม่/ผู้ดูแลของคุณ (${n9[0]}): `, PARENT9[ni]),
+        mk2("เคล็ดลับความอบอุ่นในบ้าน: ", "จัดเวลาคุณภาพกับครอบครัวสม่ำเสมอ ฟังโดยไม่ตัดสิน และชมความพยายามของลูก ไม่ใช่เฉพาะผลลัพธ์"),
+        noteP("* ผมไม่ได้ทายเรื่องเพศของลูกหรือฤกษ์คลอดโดยตั้งใจ เพราะเป็นเรื่องการแพทย์ การฝากครรภ์ การคลอด และวันผ่าตัดควรตัดสินใจตามคำแนะนำของแพทย์เท่านั้น ส่วนข้อความข้างต้นเป็นเพียงความบันเทิง")
+      );
+
+      // ===== ปีชง / เสริมดวง =====
+      const yrRel = (yy) => relOf(ai, ((yy - 4) % 12 + 12) % 12);
+      const chongTxt = (rl, yy) => {
+        const nm = ANIMAL[((yy - 4) % 12 + 12) % 12].split(" ")[0];
+        const pre = `ปี พ.ศ. ${yy + 543} (ปี${nm}): `;
+        return rl === -2 ? pre + "เป็นปีชงกับปีเกิดของคุณ เชื่อกันว่าควรระมัดระวังเป็นพิเศษ"
+          : rl === 1 ? pre + "ตรงกับปีเกิดของคุณ (ปีเกิดซ้ำ) เชื่อกันว่าควรระมัดระวังเป็นพิเศษ"
+          : rl === 3 ? pre + "เป็นปีคู่ฮะ ส่งเสริมกัน เหมาะวางแผนเรื่องสำคัญ"
+          : rl === 2 ? pre + "เป็นปีสามเหล่า เกื้อหนุนกัน ภาพรวมค่อนข้างดี"
+          : pre + "ไม่ชงและไม่ส่งเสริมเป็นพิเศษ ภาพรวมเป็นปกติ";
+      };
+      const bad = yrRel(cy) === -2 || yrRel(cy) === 1 || yrRel(cy + 1) === -2 || yrRel(cy + 1) === 1;
+      const cul = el("ul"); cul.style.cssText = "margin:4px 0 0;padding-left:20px;font-size:14px";
+      ["ขับขี่และเดินทางอย่างระมัดระวัง ไม่ประมาท", "ตรวจสุขภาพประจำปี พักผ่อนให้พอ", "อ่านสัญญาและตรวจสอบเอกสารให้ละเอียดก่อนลงนาม ไม่รีบตัดสินใจเรื่องเงินก้อนใหญ่",
+        "ทำบุญ ให้ทาน หรือช่วยเหลือผู้อื่นตามกำลังและความสบายใจ เป็นการเสริมกำลังใจ ไม่จำเป็นต้องเสียเงินจำนวนมากกับพิธีกรรมหรือเครื่องรางใดๆ", "รักษาคำพูดและน้ำใจต่อคนรอบข้าง ลดการทะเลาะเบาะแว้ง"].forEach(t => cul.append(el("li", null, t)));
+      $("rChong").replaceChildren(
+        el("h3", null, "🛡️ ปีชง และวิธีเสริมกำลังใจ"),
+        mk2("", chongTxt(yrRel(cy), cy)), mk2("", chongTxt(yrRel(cy + 1), cy + 1)),
+        el("p", "kv", bad ? "✅ ช่วงที่ควรระวังเป็นพิเศษ แนะนำให้ทำสิ่งเหล่านี้:" : "✅ ถึงแม้ไม่ใช่ปีชง การเสริมกำลังใจแบบนี้ช่วยให้ชีวิตราบรื่นขึ้น:"), cul,
+        noteP("* ปีนักษัตรเปลี่ยนตามตรุษจีน ซึ่งเว็บนี้คิดตามปีปฏิทินอย่างง่าย เพื่อความบันเทิง ควรระวังผู้ที่เสนอพิธีแก้ชงหรือขายเครื่องรางราคาแพง")
+      );
+
+      // ===== เลขเบอร์โทร/ทะเบียนรถ =====
+      const lpn = reduce9(`${d}${m}${y}`.split("").reduce((a, c) => a + Number(c), 0));
+      const nInp = el("input"); nInp.type = "text"; nInp.placeholder = "เช่น 081-234-5678 หรือ กข 1234"; nInp.maxLength = 20;
+      nInp.style.cssText = "padding:10px;border-radius:10px;border:1px solid #d6bf84;background:#fffdf6;font:inherit;width:100%;margin-top:8px";
+      const nBtn = el("button", "go", "🔢 ดูเลขมงคลของเบอร์/ทะเบียน"); nBtn.type = "button";
+      const nRes = el("div"); nRes.style.marginTop = "10px";
+      nBtn.onclick = () => {
+        const ds = nInp.value.replace(/\D/g, "");
+        if (!ds) { nRes.replaceChildren(el("p", "err", "กรุณาใส่ตัวเลขอย่างน้อย 1 ตัว")); return; }
+        const tot = ds.split("").reduce((a, c) => a + Number(c), 0), r9 = reduce9(tot) || 9;
+        const match = r9 === lpn ? "ตรงกับเลขประจำตัวของคุณ จึงเข้ากับบุคลิกของคุณ" : `ต่างจากเลขประจำตัวของคุณ (${lpn}: ${NUM9[lpn]}) ซึ่งไม่ได้แปลว่าดีหรือไม่ดี`;
+        nRes.replaceChildren(mk2(`ผลรวมเลข ${ds.length} หลัก = ${tot} → `, `เลข ${r9}: ${NUM9[r9]}`), mk2("เทียบกับตัวคุณ: ", match),
+          noteP("* เลขศาสตร์แบบง่ายเพื่อความบันเทิง ไม่ได้มีผลต่อโชคจริง ไม่ควรจ่ายเงินแพงเพื่อซื้อเบอร์หรือป้ายทะเบียนเพราะเชื่อว่าช่วยโชคลาภ ระบบนี้ไม่ได้ตรวจชื่อ-นามสกุล เพราะตำราตัวอักษรมงคลต้องอ้างตารางที่ยังไม่ได้ตรวจสอบ"));
+      };
+      $("rNum").replaceChildren(el("h3", null, "📱 เลขมงคลของเบอร์โทร/ทะเบียนรถ"),
+        mk2("เลขประจำตัวของคุณ (จากวันเกิด): ", `${lpn} — ${NUM9[lpn]}`), nInp, nBtn, nRes);
+
+      // ===== ดวงชะตาตลอดชีวิต (ไม่ทายอายุขัย) =====
+      const bd = new Date(y, m - 1, d); let age = today0.getFullYear() - y;
+      if (today0 < new Date(today0.getFullYear(), m - 1, d)) age--;
+      const lifeBox = el("div");
+      STAGES.forEach((S, i) => {
+        const cur0 = age >= S.a && age <= S.b, past = age > S.b;
+        const st = Math.min(5, Math.floor(seeded(fseed + i * 911, 700 + i) * 5) + 1);
+        const blk = el("div"); blk.style.cssText = "padding:10px 12px;margin:10px 0;border-radius:10px;border:1px solid #e3d3a8;" + (cur0 ? "background:#fbe7a8" : "");
+        const hd = el("p", "kv"); hd.style.margin = "0";
+        const rng = S.b >= 200 ? `${S.a} ปีขึ้นไป` : `${S.a}–${S.b} ปี`;
+        hd.append(el("b", null, `${S.n} (${rng}) `), el("span", null, STAR(st)), document.createTextNode(cur0 ? "  ← คุณอยู่ช่วงนี้" : past ? "  (ผ่านมาแล้ว)" : ""));
+        hd.children[1].style.cssText = "color:#c9933b;letter-spacing:2px";
+        blk.append(hd, mk2("ธีมของช่วงนี้: ", S.t), mk2("จุดแข็งของคุณที่ช่วยได้: ", STR6[top6]), mk2("ควรระวัง: ", S.c));
+        lifeBox.append(blk);
+      });
+      $("rLife").replaceChildren(el("h3", null, "🌅 ดวงชะตาตลอดชีวิตตามช่วงวัย"), el("p", "kv", `ตอนนี้คุณอายุประมาณ ${age} ปี`), lifeBox,
+        noteP("* เป็นภาพรวมตามช่วงวัยเพื่อความบันเทิง ผมไม่ได้ทำนายอายุขัยหรือวันสิ้นอายุโดยตั้งใจ เพราะไม่มีใครรู้ได้ และอาจสร้างความกังวลโดยไม่จำเป็น หากกังวลเรื่องสุขภาพควรปรึกษาแพทย์"));
+
+      Object.assign(cur, { age, top6, fseed, n9 });
+      renderFaceChapter();
       const ex = $("rExtra");
       ex.replaceChildren(
         el("h3", null, `${z[1]} เสริมจากราศี${z[0]} (ธาตุ${z[2]})`),
@@ -959,7 +1487,7 @@
           el("p", null, `ปี ค.ศ. ${y} เป็นปี${yang ? "หยาง" : "ยิน"} ตามตำราจีนเชื่อว่าพลังของปีเกิดมีผลต่อท่าทีการใช้ชีวิต: ปีหยางโน้มไปทางลงมือทำและแสดงออก ปียินโน้มไปทางละเอียดอ่อนและรับฟัง ซึ่งเป็นแนวโน้มทั่วไปที่เกิดได้กับทุกเพศ ผลการดูดวงอื่นในหน้านี้ใช้วันเดือนปีเกิดเป็นหลัก ไม่ได้ตัดสินจากเพศ`));
       }
       $("result").style.display = "block";
-      $("result").scrollIntoView({ behavior: "smooth", block: "start" });
+      startReading();
     });
   </script>
 </body>
