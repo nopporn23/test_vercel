@@ -108,6 +108,12 @@
         <label>เดือน<select id="m" required></select></label>
         <label>ปีเกิด (พ.ศ.)<select id="y" required></select></label>
       </div>
+      <div class="row" style="margin-top:10px">
+        <label>เวลาเกิด (ชั่วโมง)<select id="hh"></select></label>
+        <label>นาที<select id="mi"></select></label>
+        <label>เพศกำเนิด<select id="sx"><option value="">ไม่ระบุ</option><option value="ชาย">ชาย</option><option value="หญิง">หญิง</option></select></label>
+      </div>
+      <p class="note" style="color:var(--muted);margin:8px 0 0">เวลาเกิดและเพศเป็นข้อมูลเสริม (ไม่บังคับ) ไม่ทราบเวลาเกิดก็ดูดวงได้</p>
       <button class="go" type="submit">✨ ดูดวงเลย</button>
       <p class="err" id="err" role="alert"></p>
     </form>
@@ -125,11 +131,17 @@
       <div class="card t12" id="r20" style="margin-top:16px"></div>
       <div class="card t12" id="r6" style="margin-top:16px"></div>
       <div class="card t12" id="r9" style="margin-top:16px"></div>
+      <div class="card t12" id="rF" style="margin-top:16px"></div>
+      <div class="card t12" id="rL" style="margin-top:16px"></div>
+      <div class="card t12" id="rC" style="margin-top:16px"></div>
+      <div class="card t12" id="rM" style="margin-top:16px"></div>
+      <div class="card t12" id="rY" style="margin-top:16px"></div>
+      <div class="card t12" id="rS" style="margin-top:16px"></div>
       <div class="card extra" id="rExtra" style="margin-top:16px"></div>
     </section>
 
     <p class="note">* เพื่อความบันเทิงเท่านั้น ไม่ใช่การวินิจฉัยหรือคำทำนายที่พิสูจน์ได้ทางวิทยาศาสตร์ ใช้เป็นแนวทางสนุกๆ ประกอบการพูดคุยได้ครับ<br>
-      ข้อมูลที่กรอกประมวลผลในเบราว์เซอร์ ไม่ถูกส่งหรือเก็บไว้ที่ใด</p>
+      ข้อมูลที่กรอก (รวมเวลาเกิดและเพศ) ประมวลผลในเบราว์เซอร์ ไม่ถูกส่งหรือเก็บไว้ที่ใด</p>
   </div>
 
   <script>
@@ -249,7 +261,7 @@
     function seeded(n, salt) {
       let x = (n * 2654435761 + salt * 40503) >>> 0;
       x ^= x >>> 13; x = Math.imul(x, 1274126177) >>> 0; x ^= x >>> 16;
-      return x % 1000 / 1000;
+      return (x >>> 0) % 1000 / 1000;
     }
 
     // 9 ประเภทบุคลิกภาพ: [ชื่อ, นิสัยเด่น, ด้านที่ควรระวัง, ความกลัวพื้นฐาน]
@@ -265,13 +277,164 @@
       ["ผู้ประนีประนอม","ใจเย็น เป็นมิตร ไม่ชอบทะเลาะ","เลี่ยงปัญหา ตัดสินใจช้า","กลัวความขัดแย้งและการสูญเสียความสัมพันธ์"]
     ];
 
+    // พุธกลางคืน (ราหู) — ใช้เมื่อเกิดวันพุธและเวลาตั้งแต่ 18:00 ขึ้นไป (ค่าประมาณ)
+    const WED_NIGHT = { em:"🌑", type:"นักคิดลึกซึ้ง ลึกลับ มีสัญชาตญาณแรง", color:"เทา/เขียวเข้ม",
+      sum:"คุณเป็นคนมีมุมมองไม่เหมือนใคร ช่างสังเกต คิดลึกกว่าที่แสดงออก มีสัญชาตญาณดี แต่บางครั้งเก็บความรู้สึกและไม่เปิดเผยใจง่าย",
+      mood:["ภายนอกนิ่ง ภายในคิดมาก อารมณ์เปลี่ยนตามความคิดที่วนอยู่ ต้องการเวลาส่วนตัวเพื่อเรียบเรียงใจ", 58],
+      nature:"ชอบศึกษาเรื่องลึกซึ้ง อดทนเงียบๆ ไม่ชอบถูกเปิดเผยแผนการ มีไหวพริบและมองเห็นสิ่งที่คนอื่นมองข้าม",
+      honest:["ซื่อสัตย์กับคนที่ไว้ใจ แต่ระวังตัวและไม่บอกทุกอย่าง จึงอาจดูเป็นคนปิดบังโดยไม่ได้ตั้งใจ", 74],
+      persona:"ดูมีเสน่ห์ลึกลับ พูดน้อย สายตานิ่ง ทำให้คนอยากรู้จักมากขึ้น" };
+    const PERIOD = h => h < 6 ? "ช่วงดึก–ก่อนรุ่งสาง" : h < 12 ? "ช่วงเช้า" : h < 16 ? "ช่วงบ่าย" : h < 18 ? "ช่วงเย็น" : h < 23 ? "ช่วงค่ำ" : "ช่วงดึก";
+
+    // ดวงช่วงเวลา: [ไอคอน, หัวข้อ, [ระดับต่ำ(ควรระวัง)[2 แบบ], ระดับกลาง[2], ระดับดี[2]]]
+    const FC = [
+      ["💰","การเงิน",[
+        ["ระวังรายจ่ายที่ไม่ได้วางแผน การยืม-ให้ยืม และการซื้อตามอารมณ์ ควรเว้นการตัดสินใจเรื่องเงินก้อนใหญ่","รายจ่ายอาจงอกเกินคาด ควรจดบัญชีและสำรองเงินฉุกเฉินไว้ก่อน"],
+        ["การเงินเป็นไปตามปกติ ควรทบทวนรายรับรายจ่ายและหลีกเลี่ยงการค้ำประกัน","มีรายจ่ายจิปาถะเข้ามาบ้าง ตรวจสอบสัญญาและค่าธรรมเนียมให้ละเอียด"],
+        ["โอกาสด้านรายได้ค่อนข้างดี แต่ยังควรตรวจสอบข้อมูลก่อนลงทุนและระวังคำชักชวนที่ให้ผลตอบแทนสูงเกินจริง","เหมาะกับการวางแผนออมและปรับหนี้ให้เป็นระบบ"]]],
+      ["💼","การทำงาน",[
+        ["ระวังความเข้าใจผิดกับเพื่อนร่วมงาน งานล่าช้า และข้อผิดพลาดจากความเร่งรีบ ควรย้ำเอกสารและข้อตกลงเป็นลายลักษณ์อักษร","ภาระงานอาจหนักขึ้น ควรจัดลำดับความสำคัญและไม่รับงานเกินกำลัง"],
+        ["งานดำเนินไปตามปกติ ควรสื่อสารกับหัวหน้าและทีมให้ชัดเจน","อาจมีการเปลี่ยนแปลงเล็กน้อยในหน้าที่ ปรับตัวและเรียนรู้เพิ่มจะเป็นผลดี"],
+        ["มีโอกาสแสดงฝีมือ ได้รับความไว้วางใจหรืองานใหม่ที่ท้าทาย ระวังรับปากมากเกินไป","ความร่วมมือในทีมดี เหมาะกับการเริ่มโครงการหรือเจรจาข้อเสนอ"]]],
+      ["❤️","ความรัก/ความสัมพันธ์",[
+        ["ระวังคำพูดตอนอารมณ์ไม่ดี เรื่องเล็กอาจกลายเป็นเรื่องใหญ่ ควรเว้นระยะสงบใจก่อนคุยเรื่องสำคัญ","ความคาดหวังที่ไม่ตรงกันอาจทำให้น้อยใจ ควรพูดคุยกันตรงๆ อย่างนุ่มนวล"],
+        ["ความสัมพันธ์ราบรื่น ควรใส่ใจและให้เวลากันมากขึ้น","อาจมีเรื่องเข้าใจผิดเล็กน้อย การรับฟังช่วยแก้ได้"],
+        ["บรรยากาศความสัมพันธ์อบอุ่น เหมาะกับการทำความรู้จักหรือสานสัมพันธ์ แต่ยังควรให้เวลาศึกษากันและกัน","คนโสดมีโอกาสพบคนถูกใจผ่านเพื่อนหรือการงาน"]]],
+      ["🩺","สุขภาพ",[
+        ["ระวังพักผ่อนไม่พอ ความเครียดสะสม และอุบัติเหตุจากความเร่งรีบ หากมีอาการผิดปกติต่อเนื่องควรพบแพทย์ ไม่ควรรอ","ร่างกายอาจอ่อนล้าง่าย ควรนอนให้พอ ดื่มน้ำ และตรวจสุขภาพประจำปี"],
+        ["สุขภาพโดยรวมปกติ ควรออกกำลังกายสม่ำเสมอ และระวังการกินเวลาไม่เป็นเวลา","ระวังภูมิแพ้และอาการเจ็บป่วยเล็กน้อยตามฤดูกาล"],
+        ["พลังกายและใจค่อนข้างดี เป็นช่วงเหมาะสร้างนิสัยสุขภาพใหม่ แต่ไม่ควรประมาทเรื่องการตรวจสุขภาพ","อารมณ์แจ่มใส ใช้โอกาสนี้พักผ่อนและออกกำลังกายเบาๆ"]]],
+      ["🚗","การเดินทาง/อุบัติเหตุ",[
+        ["ระวังการขับขี่และการเดินทางไกล เลี่ยงความเร็วและความง่วง ตรวจสภาพรถก่อนออกเดินทาง","ระวังของหายและความประมาทในที่สาธารณะ"],
+        ["การเดินทางปกติ ควรวางแผนเส้นทางและเวลาล่วงหน้า","สวมอุปกรณ์ป้องกันและคาดเข็มขัดนิรภัยทุกครั้ง"],
+        ["การเดินทางค่อนข้างราบรื่น แต่ยังควรขับขี่ปลอดภัยและเผื่อเวลาเสมอ","เหมาะกับการท่องเที่ยวระยะสั้นหรือพบปะคนไกล"]]],
+      ["🤝","คนรอบข้าง/ครอบครัว",[
+        ["ระวังการนินทา ผู้ไม่หวังดี และการเสียมารยาทกับผู้ใหญ่ ควรเลือกคุยเรื่องส่วนตัวกับคนที่ไว้ใจเท่านั้น","อาจมีความเห็นไม่ตรงกันกับคนในครอบครัว ใช้ความอดทนและเหตุผล"],
+        ["ความสัมพันธ์กับคนรอบข้างเป็นปกติ ควรโทรหาหรือแวะเยี่ยมคนที่ห่างหายไป","ระวังการรับปากโดยไม่คิดให้รอบคอบ"],
+        ["ได้รับความช่วยเหลือและกำลังใจจากคนรอบข้าง เหมาะกับการรวมญาติหรือมิตรสหาย","มีผู้ใหญ่หรือเพื่อนที่ให้คำแนะนำดี ควรรับฟัง"]]]
+    ];
+    function forecast(seed, salt) {
+      return FC.map((c, i) => {
+        const r = seeded(seed + salt * 7919, 10 + i);
+        const stars = Math.min(5, Math.floor(r * 5) + 1);          // 1-5
+        const lv = stars <= 2 ? 0 : stars === 3 ? 1 : 2;
+        const v = Math.floor(seeded(seed + salt * 104729, 30 + i) * 2);
+        return { ic: c[0], name: c[1], stars, lv, text: c[2][lv][v] };
+      });
+    }
+    function fcBlock(title, rows) {
+      const box = el("div"); box.style.margin = "14px 0 4px";
+      box.append(el("h3", null, title));
+      const best = rows.reduce((a, b) => b.stars > a.stars ? b : a), worst = rows.reduce((a, b) => b.stars < a.stars ? b : a);
+      const sm = el("p", "kv", best.stars === worst.stars
+        ? "ภาพรวมค่อนข้างสมดุล ควรรักษาความรอบคอบในทุกด้าน"
+        : `เด่นด้าน${best.name} · ควรระวังเป็นพิเศษด้าน${worst.name}`);
+      sm.style.cssText = "background:#fff4d6;border-radius:8px;padding:6px 10px";
+      box.append(sm);
+      for (const r of rows) {
+        const row = el("div"); row.style.cssText = "margin:12px 0;padding-bottom:10px;border-bottom:1px solid #eee9fb";
+        const hd = el("p", "kv"); hd.style.margin = "0";
+        hd.append(el("b", null, `${r.ic} ${r.name} `), el("span", null, "★".repeat(r.stars) + "☆".repeat(5 - r.stars)));
+        hd.lastChild.style.cssText = "color:#c9933b;letter-spacing:2px";
+        const tx = el("p", "kv", (r.lv === 0 ? "ควรระวัง: " : r.lv === 1 ? "ข้อสังเกต: " : "โอกาสดี: ") + r.text);
+        tx.style.margin = "2px 0 0"; tx.style.fontSize = "14px";
+        row.append(hd, tx); box.append(row);
+      }
+      return box;
+    }
+
+    // ===== เลขมงคล/อาชีพ/ความเข้ากัน/แชร์ =====
+    const DIRS = ["เหนือ","ตะวันออกเฉียงเหนือ","ตะวันออก","ตะวันออกเฉียงใต้","ใต้","ตะวันตกเฉียงใต้","ตะวันตก","ตะวันตกเฉียงเหนือ"];
+    const EXTRA_COLORS = ["ขาว","ครีม","เขียวอ่อน","ฟ้า","ชมพู","ทอง","น้ำเงิน","เทา"];
+    const CAREER9 = [
+      "งานตรวจสอบคุณภาพ (QC/QA) บัญชี กฎหมาย ความปลอดภัย",
+      "พยาบาล ครู งานบริการลูกค้า ทรัพยากรบุคคล",
+      "งานขาย การตลาด ผู้บริหาร ผู้ประกอบการ",
+      "งานออกแบบ ศิลปะ การเขียน วิจัยและพัฒนา",
+      "นักวิจัย วิเคราะห์ข้อมูล โปรแกรมเมอร์ วิศวกร",
+      "งานกำกับดูแลและความปลอดภัย ซ่อมบำรุง ประกันภัย ตรวจสอบภายใน",
+      "ท่องเที่ยว สื่อ งานอีเวนต์ โครงการใหม่ๆ",
+      "ผู้จัดการ หัวหน้าโครงการ ธุรกิจส่วนตัว",
+      "งานประสานงาน ไกล่เกลี่ย ที่ปรึกษา ธุรการ"
+    ];
+    const CAREER6 = [
+      "งานที่ต้องความโปร่งใส เช่น การเงิน ตรวจสอบ จัดซื้อ",
+      "งานดูแลคนและงานที่ต้องเข้าใจความรู้สึก เช่น พยาบาล ให้คำปรึกษา",
+      "งานสื่อสารและงานขาย เช่น พิธีกร ประชาสัมพันธ์ ขาย",
+      "งานบริการและงานเป็นทีม เช่น ประสานงาน บริการลูกค้า",
+      "งานที่ต้องความแม่นยำและวางแผน เช่น วิศวกรรม บัญชี ควบคุมการผลิต",
+      "งานสร้างสรรค์และวิจัย เช่น ออกแบบ พัฒนาผลิตภัณฑ์"
+    ];
+    const pairKey = (a, b) => [a, b].sort().join("|");
+    const ELEM_OK = (a, b) => a === b ? 8
+      : (pairKey(a, b) === pairKey("ไฟ", "ลม") || pairKey(a, b) === pairKey("ดิน", "น้ำ")) ? 12
+      : (pairKey(a, b) === pairKey("ไฟ", "น้ำ") || pairKey(a, b) === pairKey("ดิน", "ลม")) ? -8 : 0;
+    function pairScore(a, b) {   // a, b = {ai, el}
+      let sc = 50; const notes = [];
+      if (a.ai === b.ai) { sc += 5; notes.push("ปีนักษัตรเดียวกัน เข้าใจกันง่าย แต่อาจมีจุดอ่อนซ้ำกัน"); }
+      else if (a.ai % 4 === b.ai % 4) { sc += 20; notes.push("ปีนักษัตรอยู่ในกลุ่มสามเหล่าเดียวกัน (เกื้อหนุนกัน)"); }
+      else if ((a.ai + 6) % 12 === b.ai) { sc -= 20; notes.push("ปีนักษัตรตรงข้ามกัน (ชงกัน) ต้องใช้ความเข้าใจและถนอมน้ำใจ"); }
+      else notes.push("ปีนักษัตรไม่ส่งเสริมหรือขัดกันเป็นพิเศษ");
+      const e = ELEM_OK(a.el, b.el); sc += e;
+      notes.push(e >= 12 ? "ธาตุราศีส่งเสริมกัน" : e > 0 ? "ธาตุราศีเดียวกัน คุยภาษาเดียวกัน" : e < 0 ? "ธาตุราศีค่อนข้างขัดกัน ควรปรับจังหวะเข้าหากัน" : "ธาตุราศีเป็นกลาง");
+      return { sc: Math.max(15, Math.min(95, sc)), notes };
+    }
+    let cur = null;
+
     const $ = id => document.getElementById(id);
     const nowCE = new Date().getFullYear();
 
     // เติมตัวเลือก
     $("d").append(new Option("วัน", ""), ...Array.from({length:31}, (_, i) => new Option(i + 1, i + 1)));
     $("m").append(new Option("เดือน", ""), ...MONTHS.map((n, i) => new Option(n, i + 1)));
+    $("hh").append(new Option("ไม่ทราบ", ""), ...Array.from({length:24}, (_, i) => new Option(String(i).padStart(2, "0") + " น.", i)));
+    $("mi").append(new Option("--", ""), ...Array.from({length:60}, (_, i) => new Option(String(i).padStart(2, "0"), i)));
     $("y").append(new Option("ปี พ.ศ.", ""), ...Array.from({length:111}, (_, i) => new Option(nowCE + 543 - i, nowCE - i)));
+
+    async function shareImage() {
+      if (!cur) return;
+      try { await document.fonts.load('600 40px "Noto Sans Thai"'); } catch (e) {}
+      const W = 1080, H = 1500, c = document.createElement("canvas"); c.width = W; c.height = H;
+      const g = c.getContext("2d"), F = '"Noto Sans Thai", sans-serif';
+      const bg = g.createLinearGradient(0, 0, W, H); bg.addColorStop(0, "#1d0f3d"); bg.addColorStop(1, "#5b2fa8");
+      g.fillStyle = bg; g.fillRect(0, 0, W, H);
+      g.fillStyle = "#fff"; g.beginPath();
+      if (g.roundRect) g.roundRect(50, 50, W - 100, H - 100, 40); else g.rect(50, 50, W - 100, H - 100);
+      g.fill();
+      let y0 = 130;
+      const wrap = (txt, size, color, weight, maxW, lh, x) => {
+        g.font = `${weight} ${size}px ${F}`; g.fillStyle = color; g.textAlign = "center";
+        let line = "";
+        for (const ch of txt) {
+          if (g.measureText(line + ch).width > maxW) { g.fillText(line, x, y0); y0 += lh; line = ch; } else line += ch;
+        }
+        if (line) { g.fillText(line, x, y0); y0 += lh; }
+      };
+      wrap("ผลดูดวงของฉัน", 34, "#6d6585", 500, 800, 50, W / 2);
+      y0 += 10; wrap(cur.P.em, 110, "#000", 400, 800, 120, W / 2);
+      wrap(cur.P.type, 54, "#3b1d6e", 700, 860, 74, W / 2);
+      y0 += 10; wrap(cur.P.sum, 32, "#231a3a", 400, 840, 52, W / 2);
+      y0 += 20;
+      wrap(`${cur.dayName} · ราศี${cur.z[0]} · ปี${ANIMAL[cur.ai].split(" ")[0]}`, 34, "#5b2fa8", 600, 860, 52, W / 2);
+      y0 += 24;
+      const lines = [
+        `แบบที่ ${cur.ai + 1} ใน 12 แบบ: ${T12[cur.ai][0]}`,
+        `กลุ่มที่ ${cur.gi + 1} ใน 20 กลุ่ม: ${T20[cur.gi]}`,
+        `บุคลิก 9 ประเภท: ${T9[cur.ni][0]}`,
+        `ความซื่อสัตย์ ${cur.sc6[0]}% · การเข้าสังคม ${cur.sc6[2]}% · ความรับผิดชอบ ${cur.sc6[4]}%`
+      ];
+      lines.forEach(t => wrap(t, 30, "#231a3a", 500, 860, 46, W / 2));
+      y0 = H - 150;
+      wrap("เพื่อความบันเทิงเท่านั้น", 26, "#6d6585", 400, 800, 40, W / 2);
+      const blob = await new Promise(r => c.toBlob(r, "image/png"));
+      if (!blob) { alert("สร้างรูปไม่สำเร็จ"); return; }
+      const file = new File([blob], "fortune.png", { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try { await navigator.share({ files: [file], title: "ผลดูดวงของฉัน" }); return; } catch (e) { if (e.name === "AbortError") return; }
+      }
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "fortune.png"; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }
 
     function el(tag, cls, text) {
       const e = document.createElement(tag);
@@ -299,18 +462,24 @@
       }
       if (dt > new Date()) { err.textContent = "วันเกิดต้องไม่เกินวันนี้"; return; }
 
-      const dow = dt.getDay(), P = DAY[dow], z = zodiac(m, d), ai = ((y - 4) % 12 + 12) % 12;
+      const hhv = $("hh").value, hasT = hhv !== "", bh = +hhv, mn = +$("mi").value || 0, sex = $("sx").value;
+      const wedNight = dt.getDay() === 3 && hasT && bh >= 18;
+      const dow = dt.getDay(), P = wedNight ? WED_NIGHT : DAY[dow], z = zodiac(m, d), ai = ((y - 4) % 12 + 12) % 12;
 
       $("rEm").textContent = P.em;
-      $("rDate").textContent = `เกิดวัน${DAYS[dow]}ที่ ${d} ${MONTHS[m - 1]} พ.ศ. ${y + 543}`;
+      $("rDate").textContent = `เกิดวัน${DAYS[dow]}${wedNight ? " (กลางคืน)" : ""}ที่ ${d} ${MONTHS[m - 1]} พ.ศ. ${y + 543}` +
+        (hasT ? ` เวลา ${String(bh).padStart(2, "0")}:${String(mn).padStart(2, "0")} น.` : "") + (sex ? ` · เพศ${sex}` : "");
       $("rType").textContent = P.type;
       $("rSum").textContent = P.sum;
       $("rChips").replaceChildren(
-        el("span", "chip", `วัน${DAYS[dow]}`),
+        el("span", "chip", `วัน${DAYS[dow]}${wedNight ? "กลางคืน" : ""}`),
         el("span", "chip", `ราศี${z[0]} ${z[1]}`),
         el("span", "chip", `ปี${ANIMAL[ai]} ${AEMOJI[ai]}`),
         el("span", "chip", `สีมงคล: ${P.color}`)
       );
+      const yam = ANIMAL[Math.floor(((bh + 1) % 24) / 2)].split(" ")[0];
+      if (hasT) $("rChips").append(el("span", "chip", `${PERIOD(bh)} · ยาม${yam}`));
+      if (sex) $("rChips").append(el("span", "chip", `เพศ${sex}`));
       $("rTraits").replaceChildren(
         trait("😊 อารมณ์", P.mood[0], P.mood[1]),
         trait("🧭 นิสัย", P.nature),
@@ -389,6 +558,108 @@
         mk("นิสัยเด่น: ", n9[1]), mk("ด้านที่ควรระวัง: ", n9[2]), mk("ความกลัวพื้นฐาน: ", n9[3]),
         dt9
       );
+      // ดวงเดือนนี้/ปีนี้: คำนวณคงที่จากวันเกิด + เดือน/ปีปัจจุบัน
+      const now = new Date(), cy = now.getFullYear(), cm = now.getMonth() + 1;
+      const fseed = y * 10000 + m * 100 + d + (hasT ? bh * 13 : 0);
+      const bF = $("rF");
+      bF.replaceChildren(
+        el("h3", null, "🔮 ดวงช่วงนี้ ควรระวังอะไรบ้าง"),
+        fcBlock(`ดวงเดือน${MONTHS[cm - 1]} พ.ศ. ${cy + 543}`, forecast(fseed, cy * 12 + cm)),
+        fcBlock(`ดวงปี พ.ศ. ${cy + 543}`, forecast(fseed, cy)),
+        el("p", "kv", "⚠️ คำพยากรณ์เป็นเพียงความบันเทิงและข้อคิดทั่วไป ไม่ใช่คำแนะนำทางการแพทย์ การเงิน กฎหมาย หรือการลงทุน หากมีปัญหาสุขภาพหรือการเงินจริง ควรปรึกษาแพทย์/ผู้เชี่ยวชาญ")
+      );
+      bF.lastChild.style.cssText = "font-size:13px;color:#b45309;margin-top:10px";
+      cur = { ai, z, P, ni, gi, sc6, dow, wedNight, dayName: `วัน${DAYS[dow]}${wedNight ? "กลางคืน" : ""}` };
+
+      // 1) เลขมงคล สีมงคล ทิศมงคล (เดือนนี้)
+      const mk2 = (label, txt) => { const q = el("p", "kv"); q.append(el("b", null, label), document.createTextNode(txt)); return q; };
+      const ms = fseed + (cy * 12 + cm) * 31, nums = [];
+      for (let k = 0; nums.length < 3; k++) { const v = Math.floor(seeded(ms, 50 + k) * 10); if (!nums.includes(v)) nums.push(v); }
+      const col2 = EXTRA_COLORS[Math.floor(seeded(ms, 70) * EXTRA_COLORS.length)];
+      const dir = DIRS[Math.floor(seeded(ms, 71) * DIRS.length)];
+      $("rL").replaceChildren(
+        el("h3", null, `🍀 เลขมงคล สีมงคล ทิศมงคล ประจำเดือน${MONTHS[cm - 1]}`),
+        mk2("เลขนำโชค: ", nums.join(" · ")),
+        mk2("สีประจำวันเกิด: ", P.color), mk2("สีเสริมเดือนนี้: ", col2), mk2("ทิศที่เป็นมงคล: ", dir),
+        el("p", "kv", "* คำนวณจากวันเกิดและเดือนปัจจุบันเพื่อความบันเทิง ใช้เป็นกำลังใจหรือแรงบันดาลใจเท่านั้น ไม่แนะนำให้ใช้เลขเพื่อเสี่ยงโชคหรือพนัน")
+      );
+      $("rL").lastChild.style.cssText = "font-size:13px;color:#b45309";
+
+      // 2) อาชีพที่เหมาะ
+      const top6 = sc6.indexOf(Math.max(...sc6));
+      $("rC").replaceChildren(
+        el("h3", null, "💼 อาชีพที่น่าจะเหมาะกับคุณ"),
+        mk2(`ตามบุคลิก ${n9[0]}: `, CAREER9[ni]),
+        mk2(`ตามมิติเด่น (${D6[top6][0]}): `, CAREER6[top6]),
+        el("p", "kv", "* เป็นข้อเสนอแนะทั่วไปเพื่อความบันเทิง การเลือกอาชีพจริงควรพิจารณาทักษะ ความสนใจ และโอกาสของตนเองเป็นหลัก")
+      );
+      $("rC").lastChild.style.cssText = "font-size:13px;color:#b45309";
+
+      // 3) คู่ที่เข้ากัน + 4) เช็กดวงคู่
+      const friends = [0, 1, 2].map(k => (ai % 4) + 4 * k).filter(k => k !== ai).map(k => ANIMAL[k].split(" ")[0]);
+      const clash = ANIMAL[(ai + 6) % 12].split(" ")[0];
+      const okZ = ZOD.filter(q => ELEM_OK(z[2], q[2]) >= 12).map(q => q[0]);
+      const sameEl = ZOD.filter(q => q[2] === z[2] && q[0] !== z[0]).map(q => q[0]);
+      const cd = el("select"), cm2 = el("select"), cy2 = el("select");
+      [cd, cm2, cy2].forEach(x => x.style.cssText = "padding:10px;border-radius:10px;border:1px solid #d8d0ee;background:#fff;font:inherit;width:100%");
+      cd.append(new Option("วัน", ""), ...Array.from({length:31}, (_, i) => new Option(i + 1, i + 1)));
+      cm2.append(new Option("เดือน", ""), ...MONTHS.map((n, i) => new Option(n, i + 1)));
+      cy2.append(new Option("ปี พ.ศ.", ""), ...Array.from({length:111}, (_, i) => new Option(nowCE + 543 - i, nowCE - i)));
+      const frm = el("div"); frm.style.cssText = "display:grid;grid-template-columns:1fr 1.6fr 1.3fr;gap:8px;margin-top:8px";
+      frm.append(cd, cm2, cy2);
+      const cbtn = el("button", "go", "💞 เช็กความเข้ากัน"); cbtn.type = "button";
+      const cres = el("div"); cres.style.marginTop = "10px";
+      cbtn.onclick = () => {
+        const d2 = +cd.value, m2 = +cm2.value, y2 = +cy2.value;
+        if (!d2 || !m2 || !y2) { cres.replaceChildren(el("p", "err", "กรุณาเลือกวันเกิดของอีกคนให้ครบ")); return; }
+        const t2 = new Date(y2, m2 - 1, d2);
+        if (t2.getFullYear() !== y2 || t2.getMonth() !== m2 - 1 || t2.getDate() !== d2 || t2 > new Date()) { cres.replaceChildren(el("p", "err", "วันที่ของอีกคนไม่ถูกต้อง")); return; }
+        const z2 = zodiac(m2, d2), a2 = ((y2 - 4) % 12 + 12) % 12;
+        const r = pairScore({ ai, el: z[2] }, { ai: a2, el: z2[2] });
+        const band = r.sc >= 80 ? "เข้ากันมาก" : r.sc >= 60 ? "เข้ากันดี" : r.sc >= 40 ? "พอไปด้วยกันได้ ต้องปรับเข้าหากัน" : "ต้องใช้ความเข้าใจมากเป็นพิเศษ";
+        const big = el("p", "big", `${r.sc}% — ${band}`);
+        const mt = el("div", "meter"); const fi = el("i"); fi.style.width = r.sc + "%"; mt.append(fi);
+        const ul = el("ul"); ul.style.cssText = "margin:6px 0 0;padding-left:20px;font-size:14px";
+        r.notes.forEach(n => ul.append(el("li", null, n)));
+        const nt = el("p", "kv", "* สูตรคิดคะแนนจากปีนักษัตร (สามเหล่า/ชงกัน) และธาตุราศี เพื่อความบันเทิง ความสัมพันธ์จริงขึ้นกับการเข้าใจและให้เกียรติกัน");
+        nt.style.cssText = "font-size:13px;color:#b45309";
+        cres.replaceChildren(el("p", "kv", `คุณ: ราศี${z[0]} ปี${ANIMAL[ai].split(" ")[0]}  ·  อีกคน: ราศี${z2[0]} ปี${ANIMAL[a2].split(" ")[0]}`), big, mt, ul, nt);
+      };
+      const h2c = el("h3", null, "เช็กดวงคู่ — ใส่วันเกิดอีกคน"); h2c.style.marginTop = "16px";
+      $("rM").replaceChildren(
+        el("h3", null, "💞 คู่ที่เข้ากัน"),
+        mk2("ปีนักษัตรที่เข้ากัน (สามเหล่า): ", friends.join(", ")),
+        mk2("ปีนักษัตรที่ควรระวัง (ชงกัน): ", clash),
+        mk2("ราศีที่ส่งเสริมกัน: ", okZ.join(", ")),
+        mk2("ราศีธาตุเดียวกัน: ", sameEl.join(", ")),
+        h2c, frm, cbtn, cres
+      );
+
+      // 5) ดวงรายเดือนทั้งปี
+      const ytb = el("table");
+      const yh = ytb.insertRow();
+      ["เดือน", "ภาพรวม", "เด่นด้าน", "ควรระวังด้าน"].forEach(h => { const c = document.createElement("th"); c.textContent = h; yh.append(c); });
+      for (let mo = 1; mo <= 12; mo++) {
+        const rows = forecast(fseed, cy * 12 + mo);
+        const avg = rows.reduce((a, q) => a + q.stars, 0) / rows.length;
+        const best = rows.reduce((a, q) => q.stars > a.stars ? q : a), worst = rows.reduce((a, q) => q.stars < a.stars ? q : a);
+        const tr = ytb.insertRow(); if (mo === cm) tr.className = "me";
+        tr.insertCell().textContent = MONTHS[mo - 1];
+        tr.insertCell().textContent = "★".repeat(Math.round(avg)) + "☆".repeat(5 - Math.round(avg)) + ` ${avg.toFixed(1)}`;
+        tr.insertCell().textContent = best.name; tr.insertCell().textContent = best.stars === worst.stars ? "-" : worst.name;
+      }
+      const ysc = el("div"); ysc.style.overflowX = "auto"; ysc.append(ytb);
+      const ynt = el("p", "kv", "* แถวสีเหลืองคือเดือนปัจจุบัน เพื่อความบันเทิง ไม่ใช่คำแนะนำทางการแพทย์ การเงิน หรือกฎหมาย");
+      ynt.style.cssText = "font-size:13px;color:#b45309;margin-top:8px";
+      $("rY").replaceChildren(el("h3", null, `📅 ดวงรายเดือนตลอดปี พ.ศ. ${cy + 543}`), ysc, ynt);
+
+      // 6) บันทึกเป็นภาพ / แชร์
+      const sb = el("button", "go", "📸 บันทึกผลเป็นรูปภาพ / แชร์"); sb.type = "button";
+      sb.onclick = shareImage;
+      const snt = el("p", "kv", "รูปที่สร้างจะไม่แสดงวันเดือนปีเกิดหรือเวลาเกิดของคุณ แสดงเฉพาะผลสรุป");
+      snt.style.cssText = "font-size:13px;color:var(--muted);margin-top:8px";
+      $("rS").replaceChildren(el("h3", null, "แชร์ผลดูดวงให้เพื่อน"), sb, snt);
+
       const ex = $("rExtra");
       ex.replaceChildren(
         el("h3", null, `${z[1]} เสริมจากราศี${z[0]} (ธาตุ${z[2]})`),
@@ -396,6 +667,18 @@
         el("h3", null, `${AEMOJI[ai]} เสริมจากปีนักษัตร${ANIMAL[ai]}`),
         el("p", null, "คนปีเดียวกันมักมีบุคลิกคล้ายกันในบางด้านตามความเชื่อโบราณ (คำนวณตามปีปฏิทิน ไม่รวมกรณีเกิดช่วงก่อนตรุษจีน)")
       );
+      if (hasT) {
+        ex.append(el("h3", null, `🕰️ เสริมจากเวลาเกิด (ยาม${yam})`),
+          el("p", null, `เกิด${PERIOD(bh)} ตามตำรายามโบราณแบ่งวันเป็น 12 ยามละ 2 ชั่วโมง ของคุณตรงกับยาม${yam} เชื่อกันว่าเวลาเกิดช่วยเสริมด้านที่ซ่อนอยู่ในตัวตน` +
+            (wedNight ? " และเนื่องจากเกิดวันพุธตั้งแต่ 18:00 น. ขึ้นไป จึงใช้ลักษณะ “พุธกลางคืน” ในการ์ดด้านบน (ใช้เวลา 18:00 น. เป็นเกณฑ์โดยประมาณ)" : "")));
+      } else if (dt.getDay() === 3) {
+        ex.append(el("p", null, "💡 คนเกิดวันพุธแบ่งเป็นพุธกลางวันและพุธกลางคืน หากทราบเวลาเกิดแล้วเลือกเพิ่ม ผลจะแม่นยำขึ้นตามตำรา"));
+      }
+      if (sex) {
+        const yang = y % 2 === 0;
+        ex.append(el("h3", null, "☯️ เสริมจากเพศและปีเกิด"),
+          el("p", null, `ปี ค.ศ. ${y} เป็นปี${yang ? "หยาง" : "ยิน"} ตามตำราจีนเชื่อว่าพลังของปีเกิดมีผลต่อท่าทีการใช้ชีวิต: ปีหยางโน้มไปทางลงมือทำและแสดงออก ปียินโน้มไปทางละเอียดอ่อนและรับฟัง ซึ่งเป็นแนวโน้มทั่วไปที่เกิดได้กับทุกเพศ ผลการดูดวงอื่นในหน้านี้ใช้วันเดือนปีเกิดเป็นหลัก ไม่ได้ตัดสินจากเพศ`));
+      }
       $("result").style.display = "block";
       $("result").scrollIntoView({ behavior: "smooth", block: "start" });
     });
