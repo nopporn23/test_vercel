@@ -609,14 +609,19 @@
       // 1) เลขมงคล สีมงคล ทิศมงคล (เดือนนี้)
       const mk2 = (label, txt) => { const q = el("p", "kv"); q.append(el("b", null, label), document.createTextNode(txt)); return q; };
       const ms = fseed + (cy * 12 + cm) * 31;
-      const num6 = Array.from({length: 6}, (_, k) => Math.floor(seeded(ms, 50 + k) * 10)).join("");
+      // งวดสลากถัดไป: วันที่ 1 และ 16 ของเดือน (นับรวมวันนี้ถ้าตรงกับวันออกรางวัล)
+      const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+      const drawDt = [new Date(t0.getFullYear(), t0.getMonth(), 1), new Date(t0.getFullYear(), t0.getMonth(), 16), new Date(t0.getFullYear(), t0.getMonth() + 1, 1)].find(q => q >= t0);
+      const dk = drawDt.getFullYear() * 10000 + (drawDt.getMonth() + 1) * 100 + drawDt.getDate();
+      const num6 = Array.from({length: 6}, (_, k) => Math.floor(seeded(fseed * 3 + dk, 50 + k) * 10)).join("");
+      const drawTxt = drawDt.toLocaleDateString("th-TH", { day: "numeric", month: "long", year: "numeric" });
       const col2 = EXTRA_COLORS[Math.floor(seeded(ms, 70) * EXTRA_COLORS.length)];
       const dir = DIRS[Math.floor(seeded(ms, 71) * DIRS.length)];
       $("rL").replaceChildren(
         el("h3", null, `🍀 เลขมงคล สีมงคล ทิศมงคล ประจำเดือน${MONTHS[cm - 1]}`),
-        mk2("เลขขำๆ 6 หลักประจำเดือน: ", num6),
+        mk2(`เลขขำๆ 6 หลักสำหรับงวด ${drawTxt}: `, num6),
         mk2("สีประจำวันเกิด: ", P.color), mk2("สีเสริมเดือนนี้: ", col2), mk2("ทิศที่เป็นมงคล: ", dir),
-        el("p", "kv", "* คำนวณจากวันเกิดและเดือนปัจจุบันเพื่อความบันเทิง เลขขำๆ ไม่ใช่เลขเด็ดและไม่มีผลต่อรางวัลใดๆ ไม่แนะนำให้ใช้เสี่ยงโชคหรือพนัน")
+        el("p", "kv", "* คำนวณจากวันเกิดและเดือนปัจจุบันเพื่อความบันเทิง เลขขำๆ คำนวณจากวันเกิดและวันออกรางวัลงวดถัดไป (วันที่ 1 และ 16) ไม่ใช่เลขเด็ด ไม่ได้ช่วยให้ถูกรางวัล และไม่แนะนำให้ใช้เสี่ยงโชคหรือพนัน")
       );
       $("rL").lastChild.style.cssText = "font-size:13px;color:#b45309";
 
