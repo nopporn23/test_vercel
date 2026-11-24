@@ -3,21 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#3b1d6e">
+  <meta name="theme-color" content="#14092b">
   <title>ดูดวงตามวันเดือนปีเกิด</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@500;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --ink: #231a3a;
-      --muted: #6d6585;
-      --gold: #f5c04a;
-      --purple: #3b1d6e;
-      --purple2: #5b2fa8;
-      --card: rgba(255,255,255,.95);
+      --ink: #2b2236;
+      --muted: #7a6a55;
+      --gold: #e8b64a;
+      --gold-d: #b8862b;
+      --purple: #7a1f2b;      /* หัวข้อ: แดงเลือดหมู */
+      --purple2: #8a4a0a;     /* ข้อความเน้น: น้ำตาลทอง */
+      --paper: #fbf4e2;
+      --paper2: #f3e6c3;
+      --line: #e3d3a8;
+      --card: var(--paper);
     }
     * { box-sizing: border-box; }
+    html { background: #14092b; }
     body {
       margin: 0;
       min-height: 100vh;
@@ -25,81 +30,201 @@
       color: var(--ink);
       line-height: 1.7;
       background:
-        radial-gradient(circle at 15% 10%, rgba(245,192,74,.25), transparent 22rem),
-        radial-gradient(circle at 90% 30%, rgba(139,92,246,.35), transparent 26rem),
-        linear-gradient(160deg, #1d0f3d 0%, #3b1d6e 55%, #2a1456 100%);
+        radial-gradient(ellipse at 50% -10%, rgba(232,182,74,.28), transparent 38rem),
+        radial-gradient(circle at 12% 40%, rgba(122,31,43,.35), transparent 26rem),
+        radial-gradient(circle at 92% 70%, rgba(91,47,168,.38), transparent 28rem),
+        linear-gradient(180deg, #14092b 0%, #1f0f45 50%, #12082a 100%);
       background-attachment: fixed;
-      padding: 28px 16px 48px;
+      padding: 0 16px 56px;
+      position: relative;
+      overflow-x: hidden;
     }
-    .wrap { width: min(720px, 100%); margin: 0 auto; }
-    header { text-align: center; color: #fff; margin-bottom: 22px; }
-    header .moon { font-size: 44px; filter: drop-shadow(0 0 14px rgba(245,192,74,.6)); }
-    h1 { margin: 4px 0 4px; font-size: clamp(26px, 7vw, 38px); }
-    header p { margin: 0; color: #d9cffa; font-size: 16px; }
+    /* ท้องฟ้าดาว */
+    body::before, body::after {
+      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-repeat: repeat;
+    }
+    body::before {
+      background-image:
+        radial-gradient(1.4px 1.4px at 20px 30px, #fff, transparent),
+        radial-gradient(1px 1px at 90px 80px, #ffe9b0, transparent),
+        radial-gradient(1.6px 1.6px at 150px 20px, #fff, transparent),
+        radial-gradient(1px 1px at 60px 140px, #fff, transparent),
+        radial-gradient(1.2px 1.2px at 180px 120px, #ffe9b0, transparent);
+      background-size: 210px 170px;
+      opacity: .7;
+    }
+    body::after {
+      background-image:
+        radial-gradient(1.6px 1.6px at 40px 60px, #fff, transparent),
+        radial-gradient(1.2px 1.2px at 130px 100px, #ffd978, transparent),
+        radial-gradient(1px 1px at 100px 10px, #fff, transparent);
+      background-size: 260px 210px;
+      animation: twinkle 4.5s ease-in-out infinite;
+    }
+    @keyframes twinkle { 0%,100% { opacity: .15; } 50% { opacity: .85; } }
 
+    .wrap { width: min(760px, 100%); margin: 0 auto; position: relative; z-index: 1; }
+
+    /* ===== หัวเว็บ ===== */
+    header { text-align: center; color: #fff; padding: 34px 0 10px; }
+    .kicker { color: var(--gold); letter-spacing: .25em; font-size: 13px; font-weight: 600; opacity: .9; }
+    .mandala { width: 150px; height: 150px; margin: 14px auto 8px; display: block; filter: drop-shadow(0 0 18px rgba(232,182,74,.55)); }
+    .mandala .spin { transform-origin: 100px 100px; animation: spin 90s linear infinite; }
+    .mandala .spin2 { transform-origin: 100px 100px; animation: spin 60s linear infinite reverse; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    h1 {
+      margin: 6px 0 6px;
+      font-family: "Noto Serif Thai", serif; font-weight: 800;
+      font-size: clamp(30px, 8vw, 46px); line-height: 1.25;
+      background: linear-gradient(180deg, #fff3c7 0%, #f0c14f 55%, #b8862b 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      text-shadow: 0 0 30px rgba(232,182,74,.35);
+    }
+    header p { margin: 0 auto; max-width: 520px; color: #d9cffa; font-size: 16px; }
+    .orn { display: flex; align-items: center; gap: 12px; justify-content: center; color: var(--gold); margin: 16px auto 22px; width: min(360px, 90%); font-size: 14px; }
+    .orn::before, .orn::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+
+    /* ===== การ์ดกระดาษโบราณ กรอบทอง ===== */
     .card {
-      background: var(--card);
-      border-radius: 22px;
-      padding: clamp(18px, 4vw, 28px);
-      box-shadow: 0 20px 50px rgba(0,0,0,.28);
-      margin-bottom: 16px;
+      position: relative;
+      background: linear-gradient(180deg, #fffaf0 0%, var(--paper) 60%, var(--paper2) 140%);
+      border-radius: 18px;
+      padding: clamp(18px, 4vw, 30px);
+      margin-bottom: 18px;
+      border: 1px solid var(--gold-d);
+      box-shadow:
+        inset 0 0 0 5px var(--paper),
+        inset 0 0 0 6px rgba(184,134,43,.55),
+        0 18px 44px rgba(0,0,0,.45),
+        0 0 28px rgba(232,182,74,.12);
     }
+    .card::before, .card::after {
+      content: "✦"; position: absolute; color: var(--gold-d); font-size: 13px; line-height: 1; opacity: .85;
+    }
+    .card::before { top: 11px; left: 13px; }
+    .card::after { bottom: 11px; right: 13px; }
+
     .row { display: grid; grid-template-columns: 1fr 1.6fr 1.3fr; gap: 10px; }
-    label { display: grid; gap: 4px; font-size: 14px; color: var(--muted); font-weight: 500; }
+    label { display: grid; gap: 4px; font-size: 14px; color: var(--muted); font-weight: 600; }
     select, button {
-      font: inherit; width: 100%; padding: 12px; border-radius: 12px;
-      border: 1px solid #d8d0ee; background: #fff; color: var(--ink);
+      font: inherit; width: 100%; padding: 12px; border-radius: 10px;
+      border: 1px solid #d6bf84; background: #fffdf6; color: var(--ink);
     }
-    select:focus { outline: 2px solid var(--purple2); }
+    select:focus { outline: 2px solid var(--gold-d); outline-offset: 1px; }
     button.go {
-      margin-top: 14px; border: 0; cursor: pointer; font-weight: 700; font-size: 17px;
-      color: #3b1d6e; background: linear-gradient(135deg, #ffd978, #f5c04a);
-      box-shadow: 0 8px 20px rgba(245,192,74,.4);
+      position: relative; overflow: hidden;
+      margin-top: 16px; border: 1px solid #8a6212; cursor: pointer;
+      font-family: "Noto Serif Thai", serif; font-weight: 800; font-size: 18px; letter-spacing: .04em;
+      color: #3a1c00; background: linear-gradient(180deg, #ffe08a, #e8b64a 55%, #c98f1f);
+      box-shadow: 0 8px 22px rgba(232,182,74,.45), inset 0 1px 0 rgba(255,255,255,.6);
+      transition: transform .15s, box-shadow .15s;
     }
-    button.go:hover { filter: brightness(1.05); }
+    button.go::after {
+      content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+      background: linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent);
+      transform: skewX(-20deg); animation: shine 3.6s ease-in-out infinite;
+    }
+    @keyframes shine { 0%, 55% { left: -60%; } 100% { left: 130%; } }
+    button.go:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(232,182,74,.6), inset 0 1px 0 rgba(255,255,255,.6); }
+    button.go:active { transform: translateY(0); }
     .err { color: #b91c1c; font-size: 14px; margin: 10px 0 0; min-height: 1.4em; }
 
+    /* ===== ผลลัพธ์ ===== */
     #result { display: none; }
-    .hero { text-align: center; }
-    .hero .em { font-size: 54px; line-height: 1.1; }
-    .hero small { color: var(--muted); }
-    .hero h2 { margin: 4px 0 8px; font-size: clamp(22px, 6vw, 30px); color: var(--purple); }
-    .hero p { margin: 0 auto; max-width: 540px; }
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
-    .chip { padding: 4px 14px; border-radius: 99px; background: #efe9ff; color: var(--purple2); font-size: 14px; font-weight: 600; }
+    #result > .card, #result > .traits { animation: rise .7s cubic-bezier(.22,1,.36,1) both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 
-    .traits { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .trait { background: var(--card); border-radius: 18px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
-    .trait h3 { margin: 0 0 4px; font-size: 17px; color: var(--purple); }
+    .hero { text-align: center; padding-top: 34px; }
+    .hero .em {
+      width: 104px; height: 104px; margin: 0 auto 10px; border-radius: 50%;
+      display: grid; place-items: center; font-size: 54px; line-height: 1;
+      background: radial-gradient(circle at 35% 30%, #fff4cf, #f2cf75 60%, #d9a53a);
+      border: 2px solid var(--gold-d);
+      box-shadow: 0 0 0 6px rgba(232,182,74,.22), 0 0 30px rgba(232,182,74,.55), inset 0 -6px 14px rgba(138,98,18,.25);
+    }
+    .hero small { color: var(--muted); font-weight: 500; }
+    .hero h2 {
+      margin: 6px 0 10px; font-family: "Noto Serif Thai", serif; font-weight: 800;
+      font-size: clamp(22px, 6vw, 31px); color: var(--purple); line-height: 1.35;
+    }
+    .hero p { margin: 0 auto; max-width: 560px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px; }
+    .chip {
+      padding: 4px 15px; border-radius: 99px; font-size: 14px; font-weight: 600;
+      background: linear-gradient(180deg, #fff0bd, #f3dc92); color: #6b4300; border: 1px solid #d8b45a;
+    }
+
+    .traits { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+    .trait {
+      position: relative; border-radius: 16px; padding: 18px;
+      background: linear-gradient(180deg, #fffaf0, var(--paper));
+      border: 1px solid var(--gold-d);
+      box-shadow: inset 0 0 0 4px var(--paper), inset 0 0 0 5px rgba(184,134,43,.45), 0 12px 30px rgba(0,0,0,.4);
+    }
+    .trait h3 { margin: 0 0 4px; font-family: "Noto Serif Thai", serif; font-size: 17px; color: var(--purple); }
     .trait p { margin: 0; font-size: 15px; }
-    .meter { height: 8px; border-radius: 99px; background: #eee9fb; margin: 8px 0 10px; overflow: hidden; }
-    .meter i { display: block; height: 100%; background: linear-gradient(90deg, #8b5cf6, #f5c04a); border-radius: 99px; }
-    .t12 h3 { margin: 0 0 4px; color: var(--purple); }
-    .t12 .big { font-size: 22px; font-weight: 700; color: var(--purple2); margin: 0 0 8px; }
+    .meter { height: 8px; border-radius: 99px; background: #ead9ad; margin: 8px 0 10px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,.15); }
+    .meter i { display: block; height: 100%; background: linear-gradient(90deg, #9b2335, #e8b64a); border-radius: 99px; }
+
+    .t12 h3, .extra h3 {
+      margin: 0 0 8px; font-family: "Noto Serif Thai", serif; font-weight: 700; color: var(--purple);
+      padding-bottom: 6px; border-bottom: 1px solid transparent;
+      border-image: linear-gradient(90deg, var(--gold-d), transparent) 1;
+    }
+    .t12 .big { font-family: "Noto Serif Thai", serif; font-size: 22px; font-weight: 800; color: var(--purple2); margin: 0 0 8px; }
     .t12 .kv { margin: 0 0 6px; font-size: 15px; }
     .t12 .kv b { color: var(--purple); }
     .t12 details { margin-top: 12px; }
-    .t12 summary { cursor: pointer; color: var(--purple2); font-weight: 600; }
+    .t12 summary { cursor: pointer; color: var(--purple2); font-weight: 700; }
     .t12 table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 8px; }
-    .t12 th, .t12 td { text-align: left; padding: 7px 6px; border-bottom: 1px solid #eee9fb; vertical-align: top; }
-    .t12 tr.me { background: #fff4d6; font-weight: 600; }
-    .extra h3 { margin: 0 0 6px; color: var(--purple); }
+    .t12 th, .t12 td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .t12 th { color: var(--purple); font-weight: 700; }
+    .t12 tr.me { background: #fbe7a8; font-weight: 600; }
     .extra p { margin: 0 0 10px; font-size: 15px; }
-    .note { color: #cfc4f0; font-size: 13px; text-align: center; margin-top: 18px; }
+    .note { color: #cfc4f0; font-size: 13px; text-align: center; margin-top: 22px; }
 
     @media (max-width: 520px) {
       .row { grid-template-columns: 1fr 1fr; }
       .row label:last-child { grid-column: 1 / -1; }
       .traits { grid-template-columns: 1fr; }
+      .mandala { width: 120px; height: 120px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      body::after, .mandala .spin, .mandala .spin2, button.go::after, #result > .card, #result > .traits { animation: none !important; }
+      body::after { opacity: .5; }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="moon">🔮</div>
+      <div class="kicker">✦ โหราศาสตร์ · ยามฤกษ์ · ชะตาชีวิต ✦</div>
+      <svg class="mandala" viewBox="0 0 200 200" aria-hidden="true">
+        <defs>
+          <radialGradient id="gcore" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#fff3c7"/><stop offset="1" stop-color="#d9a53a"/></radialGradient>
+        </defs>
+        <g class="spin" fill="none" stroke="#e8b64a" stroke-width="1.2">
+          <circle cx="100" cy="100" r="96"/><circle cx="100" cy="100" r="90" stroke-dasharray="2 5"/>
+          <g id="petals">
+            <ellipse cx="100" cy="46" rx="9" ry="22"/><ellipse cx="100" cy="46" rx="9" ry="22" transform="rotate(30 100 100)"/>
+            <ellipse cx="100" cy="46" rx="9" ry="22" transform="rotate(60 100 100)"/><ellipse cx="100" cy="46" rx="9" ry="22" transform="rotate(90 100 100)"/>
+            <ellipse cx="100" cy="46" rx="9" ry="22" transform="rotate(120 100 100)"/><ellipse cx="100" cy="46" rx="9" ry="22" transform="rotate(150 100 100)"/>
+            <ellipse cx="100" cy="46" rx="9" ry="22" transform="rotate(180 100 100)"/><ellipse cx="100" cy="46" rx="9" ry="22" transform="rotate(210 100 100)"/>
+            <ellipse cx="100" cy="46" rx="9" ry="22" transform="rotate(240 100 100)"/><ellipse cx="100" cy="46" rx="9" ry="22" transform="rotate(270 100 100)"/>
+            <ellipse cx="100" cy="46" rx="9" ry="22" transform="rotate(300 100 100)"/><ellipse cx="100" cy="46" rx="9" ry="22" transform="rotate(330 100 100)"/>
+          </g>
+        </g>
+        <g class="spin2" fill="none" stroke="#f6d98b" stroke-width="1">
+          <circle cx="100" cy="100" r="62"/>
+          <polygon points="100,42 150,129 50,129"/><polygon points="100,158 50,71 150,71"/>
+        </g>
+        <circle cx="100" cy="100" r="22" fill="url(#gcore)" stroke="#8a6212" stroke-width="1.5"/>
+        <path d="M100 86 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z" fill="#7a1f2b"/>
+      </svg>
       <h1>ดูดวงตามวันเดือนปีเกิด</h1>
-      <p>เลือกวัน เดือน ปีเกิดของคุณ แล้วดูว่าคุณเป็นคนประเภทไหน</p>
+      <p>เลือกวัน เดือน ปีเกิดของคุณ เพื่อเปิดดูตัวตน อุปนิสัย ฤกษ์ยาม และดวงชะตาช่วงนี้</p>
+      <div class="orn">❖</div>
     </header>
 
     <form class="card" id="form" novalidate>
@@ -114,7 +239,7 @@
         <label>เพศกำเนิด<select id="sx"><option value="">ไม่ระบุ</option><option value="ชาย">ชาย</option><option value="หญิง">หญิง</option></select></label>
       </div>
       <p class="note" style="color:var(--muted);margin:8px 0 0">เวลาเกิดและเพศเป็นข้อมูลเสริม (ไม่บังคับ) ไม่ทราบเวลาเกิดก็ดูดวงได้</p>
-      <button class="go" type="submit">✨ ดูดวงเลย</button>
+      <button class="go" type="submit">✦ เปิดดวงชะตา ✦</button>
       <p class="err" id="err" role="alert"></p>
     </form>
 
@@ -132,6 +257,7 @@
       <div class="card t12" id="r6" style="margin-top:16px"></div>
       <div class="card t12" id="r9" style="margin-top:16px"></div>
       <div class="card t12" id="rF" style="margin-top:16px"></div>
+      <div class="card t12" id="rH" style="margin-top:16px"></div>
       <div class="card t12" id="rD" style="margin-top:16px"></div>
       <div class="card t12" id="rW" style="margin-top:16px"></div>
       <div class="card t12" id="rL" style="margin-top:16px"></div>
@@ -397,11 +523,33 @@
       love: ["ระวังน้ำเสียงและคำพูดกับคนใกล้ชิด","ส่งข้อความทักทายคนสำคัญสักข้อความ ความสัมพันธ์จะอุ่นขึ้น","บรรยากาศอบอุ่น เหมาะนัดคุยหรือทำกิจกรรมร่วมกัน"],
       health: ["พักผ่อนให้พอและระวังอุบัติเหตุจากความรีบเร่ง หากมีอาการผิดปกติต่อเนื่องควรพบแพทย์","ดื่มน้ำให้พอและยืดเส้นยืดสาย","พลังกายดี เหมาะออกกำลังกายเบาๆ"]
     };
+    // เลขขำๆ 6 หลักของงวดสลาก (วันที่ 1 และ 16) คำนวณจากวันเกิด + วันออกรางวัล
+    function drawNum(seed, dt) {
+      const dk = dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate();
+      return Array.from({length: 6}, (_, k) => Math.floor(seeded(seed * 3 + dk, 50 + k) * 10)).join("");
+    }
+    // ดวงโชคลาภพิเศษในวันหวยออก: ระดับดาวเชิงสัญลักษณ์ + ความจริงเรื่องโอกาสถูกรางวัล (ไม่แต่งตัวเลข % ขึ้นเอง)
+    function luckLines(seed, dt) {
+      const k = dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate();
+      const st = Math.min(5, Math.floor(seeded(seed * 3 + k, 300) * 5) + 1);
+      const txt = st <= 2 ? "ดวงโชคลาภงวดนี้ค่อนข้างเรียบ ไม่ควรคาดหวังเป็นพิเศษ"
+        : st === 3 ? "ดวงโชคลาภระดับกลางๆ เหมาะเป็นความสนุกเล็กๆ น้อยๆ"
+        : "ดวงโชคลาภเด่นในเชิงสัญลักษณ์ ใช้เป็นกำลังใจได้ แต่ผลจริงขึ้นกับการสุ่มล้วนๆ";
+      const a = el("p", "kv"); const sp = el("span", null, STAR(st)); sp.style.cssText = "color:#c9933b;letter-spacing:2px";
+      a.append(el("b", null, "🎰 ดวงโชคลาภพิเศษงวดนี้ (เชิงสัญลักษณ์): "), sp);
+      const b = el("p", "kv", txt);
+      // จำนวนใบขำๆ: จำกัด 1–2 ใบ จากผลรวมเลขนำโชค (ไม่แนะนำให้ซื้อมากขึ้นเพื่อ "เพิ่มโชค")
+      const dsum = drawNum(seed, dt).split("").reduce((x, y) => x + Number(y), 0), cnt = dsum % 2 + 1;
+      const b2 = el("p", "kv"); b2.append(el("b", null, "🎟️ จำนวนใบขำๆ ตามเลขนำโชค: "), document.createTextNode(`${cnt} ใบ (ผลรวมของเลขนำโชคคือ ${dsum} จึงได้ ${cnt} ใบ)`));
+      const c = el("p", "kv", "⚠️ การซื้อหลายใบไม่ได้ทำให้ \"โชคดีสุดๆ\" โอกาสเพิ่มเพียงตามสัดส่วน (เช่น 2 ใบ = 0.0002%) แต่เงินที่เสียเพิ่มตามไปด้วย เลขนำโชคไม่ได้เพิ่มโอกาสถูกรางวัล จึงไม่แนะนำให้ซื้อเกินงบความบันเทิงที่ตั้งไว้ โอกาสถูกรางวัลที่ 1 จริงๆ คือ 1 ใน 1,000,000 หรือ 0.0001% ต่อเลข 6 หลักหนึ่งชุด เป็นค่าทางคณิตศาสตร์ ไม่ขึ้นกับดวง วันเกิด หรือเลขขำๆ ที่แสดงไว้ จึงไม่สามารถระบุเปอร์เซ็นต์ที่สูงกว่านี้ได้ ซื้อเท่าที่ไหวและมองเป็นความบันเทิง ไม่ใช่การลงทุน หากควบคุมการเล่นไม่ได้ โทรสายด่วนสุขภาพจิต 1323");
+      c.style.cssText = "font-size:13px;color:#b45309";
+      return [a, b, b2, c];
+    }
     function dayInfo(seed, dt) {
       const k = dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate(), sd = seed * 3 + k;
       const stars = (salt) => Math.min(5, Math.floor(seeded(sd, salt) * 5) + 1);
       const lvOf = st => st <= 2 ? 0 : st === 3 ? 1 : 2;
-      const num = Array.from({length: 6}, (_, i) => Math.floor(seeded(sd, 100 + i) * 10)).join("");
+      const dom = dt.getDate(), num = (dom === 1 || dom === 16) ? drawNum(seed, dt) : "";
       const good = Math.floor(seeded(sd, 120) * COLS.length);
       const bad = (good + 1 + Math.floor(seeded(sd, 121) * (COLS.length - 1))) % COLS.length;
       const ws = stars(130), ms = stars(131), ls = stars(132), hs = stars(133);
@@ -415,6 +563,21 @@
       sp.style.cssText = `display:inline-block;width:14px;height:14px;border-radius:50%;background:${c[1]};border:1px solid #bbb;vertical-align:-2px;margin-right:4px`;
       return sp;
     }
+
+    // ===== ฤกษ์ยาม (แบบง่าย: เทียบนักษัตรปีเกิดกับนักษัตรของวัน/ยาม) =====
+    // นักษัตรของวัน: รอบ 12 วันตามปฏิทินจีน คำนวณจาก Julian Day (อ้างอิง 1 ม.ค. 2543 = วันมะเมีย, 1 ม.ค. 2567 = วันชวด)
+    function jdn(dt) { return Math.floor(Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate()) / 86400000) + 2440588; }
+    const dayAnimal = dt => (jdn(dt) + 1) % 12;
+    // ความสัมพันธ์กับนักษัตรปีเกิด: 3 คู่ฮะ, 2 สามเหล่า, 1 ตรงปีเกิด, 0 ปกติ, -2 ชง
+    function relOf(a, b) {
+      if ((a + b) % 12 === 1) return 3;
+      if (a === b) return 1;
+      if (a % 4 === b % 4) return 2;
+      if ((a + 6) % 12 === b) return -2;
+      return 0;
+    }
+    const REL_TXT = { "3": ["คู่ฮะ — ดีมาก", "#15803d"], "2": ["สามเหล่า — ดี", "#15803d"], "1": ["ตรงปีเกิด — พอใช้", "#6d6585"], "0": ["ปกติ", "#6d6585"], "-2": ["ชง — ควรเลี่ยงเรื่องสำคัญ", "#b91c1c"] };
+    const pad2 = n => String(n).padStart(2, "0");
 
     const $ = id => document.getElementById(id);
     const nowCE = new Date().getFullYear();
@@ -612,14 +775,14 @@
       // งวดสลากถัดไป: วันที่ 1 และ 16 ของเดือน (นับรวมวันนี้ถ้าตรงกับวันออกรางวัล)
       const t0 = new Date(); t0.setHours(0, 0, 0, 0);
       const drawDt = [new Date(t0.getFullYear(), t0.getMonth(), 1), new Date(t0.getFullYear(), t0.getMonth(), 16), new Date(t0.getFullYear(), t0.getMonth() + 1, 1)].find(q => q >= t0);
-      const dk = drawDt.getFullYear() * 10000 + (drawDt.getMonth() + 1) * 100 + drawDt.getDate();
-      const num6 = Array.from({length: 6}, (_, k) => Math.floor(seeded(fseed * 3 + dk, 50 + k) * 10)).join("");
+      const num6 = drawNum(fseed, drawDt);
       const drawTxt = drawDt.toLocaleDateString("th-TH", { day: "numeric", month: "long", year: "numeric" });
       const col2 = EXTRA_COLORS[Math.floor(seeded(ms, 70) * EXTRA_COLORS.length)];
       const dir = DIRS[Math.floor(seeded(ms, 71) * DIRS.length)];
       $("rL").replaceChildren(
         el("h3", null, `🍀 เลขมงคล สีมงคล ทิศมงคล ประจำเดือน${MONTHS[cm - 1]}`),
         mk2(`เลขขำๆ 6 หลักสำหรับงวด ${drawTxt}: `, num6),
+        ...luckLines(fseed, drawDt),
         mk2("สีประจำวันเกิด: ", P.color), mk2("สีเสริมเดือนนี้: ", col2), mk2("ทิศที่เป็นมงคล: ", dir),
         el("p", "kv", "* คำนวณจากวันเกิดและเดือนปัจจุบันเพื่อความบันเทิง เลขขำๆ คำนวณจากวันเกิดและวันออกรางวัลงวดถัดไป (วันที่ 1 และ 16) ไม่ใช่เลขเด็ด ไม่ได้ช่วยให้ถูกรางวัล และไม่แนะนำให้ใช้เสี่ยงโชคหรือพนัน")
       );
@@ -713,7 +876,7 @@
         colLine("👕 สีเสื้อนำโชค: ", ti.good),
         colLine("🚫 สีกาลกิณี (ควรเลี่ยง): ", ti.bad),
         el("p", "kv", `🎨 สีประจำวัน${DAYS[today0.getDay()]}ตามธรรมเนียม: ${WDAY_COL[today0.getDay()]}`),
-        el("p", "kv", `🔢 เลขขำๆ 6 หลักวันนี้: ${ti.num}`),
+        ...(ti.num ? [el("p", "kv", `🔢 วันนี้เป็นวันหวยออก เลขขำๆ 6 หลัก: ${ti.num}`), ...luckLines(fseed, today0)] : []),
         catLine("💼", "การงาน", ti.ws, ti.wt), catLine("💰", "การเงิน", ti.ms, ti.mt),
         catLine("❤️", "ความรัก", ti.ls, ti.lt), catLine("🩺", "สุขภาพ", ti.hs, ti.ht),
         dnote
@@ -725,12 +888,56 @@
         const blk = el("div"); blk.style.cssText = "padding:10px 0;border-bottom:1px solid #eee9fb";
         const hd = el("p", "kv"); hd.style.margin = "0"; hd.append(el("b", null, dline(dd)));
         const l2 = el("p", "kv"); l2.style.cssText = "margin:2px 0;font-size:14px";
-        l2.append(document.createTextNode("👕 "), swatch(inf.good), document.createTextNode(`${inf.good[0]}  ·  🚫 `), swatch(inf.bad), document.createTextNode(`${inf.bad[0]}  ·  🔢 ${inf.num}`));
+        l2.append(document.createTextNode("👕 "), swatch(inf.good), document.createTextNode(`${inf.good[0]}  ·  🚫 `), swatch(inf.bad), document.createTextNode(`${inf.bad[0]}${inf.num ? "  ·  🔢 เลขขำๆ งวดนี้ " + inf.num : ""}`));
         blk.append(hd, l2, catLine("💼", "การงาน", inf.ws, inf.wt), catLine("💰", "การเงิน", inf.ms, inf.mt));
-        blk.querySelectorAll("p.kv").forEach(q => { if (q !== hd && q !== l2) q.style.fontSize = "14px"; });
+        if (inf.num) luckLines(fseed, dd).forEach(q => blk.append(q));
+        blk.querySelectorAll("p.kv").forEach(q => { if (q !== hd && q !== l2 && !q.style.color) q.style.fontSize = "14px"; });
         wk.append(blk);
       }
-      $("rW").replaceChildren(el("h3", null, "📆 ดวง 6 วันข้างหน้า (สี เลข กาลกิณี การงาน การเงิน)"), wk);
+      $("rW").replaceChildren(el("h3", null, "📆 ดวง 6 วันข้างหน้า (สีเสื้อ กาลกิณี การงาน การเงิน — มีเลขเฉพาะวันหวยออก 1 และ 16)"), wk);
+
+      // ===== ฤกษ์ยาม =====
+      const aName = k => ANIMAL[k].split(" ")[0];
+      const dShort = dd => dd.toLocaleDateString("th-TH", { weekday: "short", day: "numeric", month: "short" });
+      const todayRel = relOf(ai, dayAnimal(today0));
+      const nowH = new Date().getHours(), nowYam = Math.floor(((nowH + 1) % 24) / 2);
+      const ytb2 = el("table");
+      const yh2 = ytb2.insertRow();
+      ["ยาม", "เวลา", "ความสัมพันธ์กับปีเกิดคุณ"].forEach(h => { const c = document.createElement("th"); c.textContent = h; yh2.append(c); });
+      const goodYam = [], badYam = [];
+      for (let hi = 0; hi < 12; hi++) {
+        const st = (hi * 2 + 23) % 24, rl = relOf(ai, hi);
+        const tr = ytb2.insertRow(); if (hi === nowYam) tr.className = "me";
+        tr.insertCell().textContent = `ยาม${aName(hi)}${hi === nowYam ? " (ตอนนี้)" : ""}`;
+        tr.insertCell().textContent = `${pad2(st)}:00–${pad2((st + 1) % 24)}:59`;
+        const rc = tr.insertCell(); rc.textContent = REL_TXT[rl][0]; rc.style.color = REL_TXT[rl][1];
+        const lab = `${pad2(st)}:00–${pad2((st + 1) % 24)}:59 (ยาม${aName(hi)})`;
+        if (rl >= 2) goodYam.push(lab); else if (rl === -2) badYam.push(lab);
+      }
+      const ysc2 = el("div"); ysc2.style.overflowX = "auto"; ysc2.append(ytb2);
+      const dy2 = el("details"); dy2.append(el("summary", null, "ดูครบทั้ง 12 ยามของวัน"), ysc2);
+      const goodDays = [], badDays = [];
+      for (let i = 0; i < 30; i++) {
+        const dd = new Date(today0); dd.setDate(dd.getDate() + i);
+        const rl = relOf(ai, dayAnimal(dd));
+        if (rl >= 2) goodDays.push(`${dShort(dd)}${rl === 3 ? " ⭐" : ""}`); else if (rl === -2) badDays.push(dShort(dd));
+      }
+      const hnote = el("p", "kv", "* คำนวณแบบง่ายจากความสัมพันธ์ระหว่างปีนักษัตรของคุณกับนักษัตรของวัน/ยาม (คู่ฮะ สามเหล่า ชง) เพื่อความบันเทิง ไม่ใช่ตำราฤกษ์ฉบับเต็มและไม่ได้คิดวันพระ/ปฏิทินจันทรคติ ฤกษ์สำคัญ เช่น แต่งงาน ขึ้นบ้านใหม่ ออกรถ ควรให้โหราจารย์หรือพระผู้ชำนาญพิจารณา ส่วนเรื่องสุขภาพ การรักษาพยาบาล และธุระเร่งด่วน ไม่ควรเลื่อนเพราะยามหรือวันไม่ดี");
+      hnote.style.cssText = "font-size:13px;color:#b45309;margin-top:10px";
+      const tdv = REL_TXT[String(todayRel)];
+      const tline = el("p", "kv"); const tsp = el("span", null, tdv[0]); tsp.style.cssText = `color:${tdv[1]};font-weight:600`; tline.append(el("b", null, `วันนี้เป็นวัน${aName(dayAnimal(today0))}: `), tsp);
+      $("rH").replaceChildren(
+        el("h3", null, `🕰️ ฤกษ์ยามของคุณ (ปี${aName(ai)})`),
+        tline,
+        mk2("ยามดีวันนี้: ", goodYam.length ? goodYam.join(" · ") : "-"),
+        mk2("ยามที่ควรเลี่ยงเรื่องสำคัญ: ", badYam.length ? badYam.join(" · ") : "-"),
+        dy2,
+        el("h3", null, "📅 วันดีและวันชงใน 30 วันข้างหน้า"),
+        mk2("วันดีสำหรับเรื่องสำคัญ (⭐ = คู่ฮะ ดีที่สุด): ", goodDays.join(", ") || "-"),
+        mk2("วันชง ควรเลี่ยงเรื่องสำคัญ: ", badDays.join(", ") || "-"),
+        hnote
+      );
+      $("rH").children[5].style.marginTop = "16px";
 
       const ex = $("rExtra");
       ex.replaceChildren(
