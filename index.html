@@ -74,6 +74,15 @@
     .trait p { margin: 0; font-size: 15px; }
     .meter { height: 8px; border-radius: 99px; background: #eee9fb; margin: 8px 0 10px; overflow: hidden; }
     .meter i { display: block; height: 100%; background: linear-gradient(90deg, #8b5cf6, #f5c04a); border-radius: 99px; }
+    .t12 h3 { margin: 0 0 4px; color: var(--purple); }
+    .t12 .big { font-size: 22px; font-weight: 700; color: var(--purple2); margin: 0 0 8px; }
+    .t12 .kv { margin: 0 0 6px; font-size: 15px; }
+    .t12 .kv b { color: var(--purple); }
+    .t12 details { margin-top: 12px; }
+    .t12 summary { cursor: pointer; color: var(--purple2); font-weight: 600; }
+    .t12 table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 8px; }
+    .t12 th, .t12 td { text-align: left; padding: 7px 6px; border-bottom: 1px solid #eee9fb; vertical-align: top; }
+    .t12 tr.me { background: #fff4d6; font-weight: 600; }
     .extra h3 { margin: 0 0 6px; color: var(--purple); }
     .extra p { margin: 0 0 10px; font-size: 15px; }
     .note { color: #cfc4f0; font-size: 13px; text-align: center; margin-top: 18px; }
@@ -112,6 +121,10 @@
         <div class="chips" id="rChips"></div>
       </div>
       <div class="traits" id="rTraits"></div>
+      <div class="card t12" id="r12" style="margin-top:16px"></div>
+      <div class="card t12" id="r20" style="margin-top:16px"></div>
+      <div class="card t12" id="r6" style="margin-top:16px"></div>
+      <div class="card t12" id="r9" style="margin-top:16px"></div>
       <div class="card extra" id="rExtra" style="margin-top:16px"></div>
     </section>
 
@@ -198,6 +211,60 @@
     const ANIMAL = ["ชวด (หนู)","ฉลู (วัว)","ขาล (เสือ)","เถาะ (กระต่าย)","มะโรง (งูใหญ่)","มะเส็ง (งูเล็ก)","มะเมีย (ม้า)","มะแม (แพะ)","วอก (ลิง)","ระกา (ไก่)","จอ (สุนัข)","กุน (หมู)"];
     const AEMOJI = ["🐭","🐮","🐯","🐰","🐲","🐍","🐴","🐑","🐵","🐔","🐶","🐷"];
 
+    // 12 แบบตามลักษณะนิสัยและพฤติกรรม: [ชื่อ, ลักษณะนิสัย, วิธีรับมือ]
+    const T12 = [
+      ["นักเหตุผล","ใช้ข้อมูลและหลักการ ไม่เชื่ออะไรง่าย ๆ","คุยด้วยข้อเท็จจริง"],
+      ["นักอารมณ์","อ่อนไหว ให้ความสำคัญกับความรู้สึก","ระวังคำพูดและน้ำเสียง"],
+      ["นักควบคุม","ชอบสั่งการ ต้องการมีอำนาจตัดสินใจ","กำหนดขอบเขตให้ชัดเจน"],
+      ["นักประนีประนอม","ไม่ชอบความขัดแย้ง ยอมคนง่าย","เปิดโอกาสให้แสดงความคิดเห็น"],
+      ["นักแข่งขัน","ต้องการชัยชนะ ชอบเปรียบเทียบ","กำหนดเป้าหมายที่ชัดเจน"],
+      ["นักร่วมมือ","ชอบช่วยเหลือ คำนึงถึงส่วนรวม","ส่งเสริมการทำงานเป็นทีม"],
+      ["นักผลประโยชน์","คำนึงถึงสิ่งที่ตัวเองจะได้รับ","ทำข้อตกลงให้ชัดเจน"],
+      ["นักวิจารณ์","มองเห็นข้อบกพร่อง ชอบทักท้วง","ให้เสนอทางแก้ไขด้วย"],
+      ["นักสร้างสรรค์","คิดนอกกรอบ ชอบสิ่งใหม่","ให้อิสระทางความคิด"],
+      ["นักอนุรักษนิยม","ยึดวิธีเดิม ไม่ชอบการเปลี่ยนแปลง","ค่อย ๆ เปลี่ยนและแสดงหลักฐาน"],
+      ["นักรับผิดชอบ","รักษาคำพูด ทำงานจนสำเร็จ","ให้ความไว้วางใจตามผลงาน"],
+      ["นักหลีกเลี่ยง","ไม่ชอบรับผิดชอบหรือเผชิญปัญหา","กำหนดหน้าที่และติดตามผล"]
+    ];
+
+    // 20 กลุ่มตามลักษณะนิสัย
+    const T20 = [
+      "ชอบเป็นผู้นำ ชอบสั่งการ","ชอบเป็นผู้ตาม ไม่กล้าตัดสินใจ","มีเหตุผล ชอบวิเคราะห์","ใช้อารมณ์เป็นหลัก",
+      "ใจเย็น อดทน","ใจร้อน หงุดหงิดง่าย","ซื่อสัตย์ ตรงไปตรงมา","เจ้าเล่ห์ ชอบเอาเปรียบ",
+      "มีน้ำใจ ชอบช่วยเหลือ","เห็นแก่ตัว เน้นผลประโยชน์ตนเอง","ขยัน มีความรับผิดชอบ","เกียจคร้าน ชอบหลีกเลี่ยงหน้าที่",
+      "รอบคอบ เจ้าระเบียบ","ประมาท ไม่ละเอียด","มั่นใจในตัวเอง กล้าแสดงออก","ขี้อาย ไม่มั่นใจ",
+      "มองโลกในแง่ดี","มองโลกในแง่ร้าย","เปิดใจ ยอมรับความคิดเห็นผู้อื่น","ดื้อรั้น ยึดติดกับความคิดตนเอง"
+    ];
+
+    // 6 มิติบุคลิกภาพ (HEXACO): [ชื่อ, ต่ำ, กลาง, สูง, ตัวอักษร, อังกฤษ, สี, นิยามคะแนนสูง, นิยามคะแนนต่ำ]
+    const D6 = [
+      ["ความซื่อสัตย์และความถ่อมตน","ยืดหยุ่นกับกติกา ชอบเจรจาต่อรองเพื่อประโยชน์ตน","ซื่อตรงตามสถานการณ์ รู้จักวางตัว","ตรงไปตรงมา ไม่เอาเปรียบ ถ่อมตัว","H","Honesty–Humility","#3b8a6b","จริงใจ ยุติธรรม ไม่โลภ ไม่เอาเปรียบ","ชอบผลประโยชน์ส่วนตัว เจ้าเล่ห์ ให้ความสำคัญกับสถานะ"],
+      ["ความอ่อนไหวทางอารมณ์","นิ่ง กล้าเผชิญความเสี่ยง ไม่ค่อยกังวล","รับมือความเครียดได้พอดี มีกังวลบ้างบางครั้ง","ไวต่อความรู้สึก ห่วงใยคนใกล้ชิด กังวลง่าย","E","Emotionality","#b0658a","อ่อนไหว เห็นอกเห็นใจ กังวลง่าย ผูกพันกับคน","ใจแข็ง พึ่งพาตนเอง ไม่หวั่นไหวง่าย"],
+      ["การเข้าสังคม","ชอบอยู่เงียบๆ ใช้เวลาส่วนตัว","เข้าสังคมได้ตามโอกาส","ร่าเริง เข้าหาคนง่าย ชอบเป็นจุดสนใจ","X","Extraversion","#c9933b","มั่นใจ พูดเก่ง ชอบเข้าสังคม มีพลัง","รักความสงบ เก็บตัว ไม่ชอบเป็นจุดสนใจ"],
+      ["ความประนีประนอม","ยึดจุดยืน ตรงจนอาจขัดแย้งง่าย","รู้จักถอยเมื่อจำเป็น","ใจกว้าง ให้อภัยง่าย เลี่ยงความขัดแย้ง","A","Agreeableness","#5b8db8","ให้อภัย ใจเย็น ยืดหยุ่น ไม่ถือโทษ","โกรธง่าย ชอบโต้แย้ง ดื้อรั้น ไม่ยอมคน"],
+      ["ความรับผิดชอบและวินัย","ทำตามอารมณ์ ชอบความยืดหยุ่น","ทำงานเป็นระบบเมื่อมีเป้าหมายชัด","เป็นระเบียบ ตรงเวลา ทำจนสำเร็จ","C","Conscientiousness","#8b72b8","ขยัน รอบคอบ มีระเบียบ ควบคุมตนเองได้ดี","ไม่เป็นระบบ ผัดวันประกันพรุ่ง ตัดสินใจโดยไม่ไตร่ตรอง"],
+      ["การเปิดรับประสบการณ์ใหม่","ชอบวิถีเดิมที่คุ้นเคย","เปิดรับสิ่งใหม่เมื่อเห็นประโยชน์","อยากรู้อยากเห็น ชอบความคิดสร้างสรรค์","O","Openness to Experience","#3f8f93","ช่างสงสัย สร้างสรรค์ ชอบเรียนรู้และทดลอง","ชอบความคุ้นเคย ยึดวิธีเดิม สนใจแนวทางที่ปฏิบัติได้จริง"]
+    ];
+    // ค่าสุ่มคงที่จากวันเกิด (เกิดวันเดิม ได้ผลเดิมเสมอ)
+    function seeded(n, salt) {
+      let x = (n * 2654435761 + salt * 40503) >>> 0;
+      x ^= x >>> 13; x = Math.imul(x, 1274126177) >>> 0; x ^= x >>> 16;
+      return x % 1000 / 1000;
+    }
+
+    // 9 ประเภทบุคลิกภาพ: [ชื่อ, นิสัยเด่น, ด้านที่ควรระวัง, ความกลัวพื้นฐาน]
+    const T9 = [
+      ["นักสมบูรณ์แบบ","มีหลักการ ถูกต้อง มีระเบียบ","รู้จี้ ชอบจับผิด","กลัวทำผิด"],
+      ["ผู้ให้","ใจดี ชอบช่วยเหลือ ดูแลคน","คาดหวังการตอบแทน","กลัวไม่มีใครรัก"],
+      ["นักสำเร็จ","ขยัน ทะเยอทะยาน เน้นผลงาน","ยึดติดภาพลักษณ์","กลัวล้มเหลว"],
+      ["นักปัจเจก","มีเอกลักษณ์ สร้างสรรค์ อารมณ์ลึกซึ้ง","อ่อนไหว เปรียบเทียบตัวเอง","กลัวไม่มีความสำคัญ"],
+      ["นักสังเกตการณ์","ชอบความรู้ วิเคราะห์ รักความเป็นส่วนตัว","เก็บตัว ห่างเหิน","กลัวไม่มีความสามารถ"],
+      ["นักภักดี","รอบคอบ ซื่อสัตย์ ระวังความเสี่ยง","ขี้กังวล ระแวง","กลัวความไม่มั่นคง"],
+      ["นักผจญภัย","สนุกสนาน มองโลกในแง่ดี ชอบสิ่งใหม่","เบื่อง่าย ขาดความต่อเนื่อง","กลัวความทุกข์หรือถูกจำกัด"],
+      ["นักท้าทาย","เด็ดขาด กล้าหาญ มีความเป็นผู้นำ","ชอบควบคุม แข็งกร้าว","กลัวถูกควบคุม"],
+      ["ผู้ประนีประนอม","ใจเย็น เป็นมิตร ไม่ชอบทะเลาะ","เลี่ยงปัญหา ตัดสินใจช้า","กลัวความขัดแย้งและการสูญเสียความสัมพันธ์"]
+    ];
+
     const $ = id => document.getElementById(id);
     const nowCE = new Date().getFullYear();
 
@@ -249,6 +316,78 @@
         trait("🧭 นิสัย", P.nature),
         trait("🤝 ความซื่อสัตย์", P.honest[0], P.honest[1]),
         trait("🎭 บุคลิก", P.persona)
+      );
+      // เลือกแบบใน 12 แบบ: ใช้ปีนักษัตร (วงจร 12 ปี) ไล่ตามลำดับ ชวด=1 ... กุน=12
+      const t = T12[ai], box = $("r12");
+      const tbl = el("table");
+      const hr = tbl.insertRow();
+      ["#", "ประเภท", "ลักษณะนิสัย", "วิธีรับมือ"].forEach(h => { const c = document.createElement("th"); c.textContent = h; hr.append(c); });
+      T12.forEach((r, i) => {
+        const tr = tbl.insertRow();
+        if (i === ai) tr.className = "me";
+        [i + 1, r[0], r[1], r[2]].forEach(v => { tr.insertCell().textContent = v; });
+      });
+      const det = el("details");
+      det.append(el("summary", null, "ดูครบทั้ง 12 แบบ"), tbl);
+      const k1 = el("p", "kv"); k1.append(el("b", null, "ลักษณะนิสัย: "), document.createTextNode(t[1]));
+      const k2 = el("p", "kv"); k2.append(el("b", null, "วิธีรับมือ/วิธีสื่อสารกับคุณ: "), document.createTextNode(t[2]));
+      box.replaceChildren(
+        el("h3", null, "🧩 คุณเป็นแบบไหนใน 12 แบบ"),
+        el("p", "big", `แบบที่ ${ai + 1}: ${t[0]}`),
+        k1, k2, det
+      );
+      // เลือกกลุ่มใน 20 แบบ: (วัน + เดือน + ปี ค.ศ.) หารเอาเศษ 20 แล้วบวก 1
+      const gi = (d + m + y) % 20, b20 = $("r20");
+      const ul = el("ol"); ul.style.paddingLeft = "22px"; ul.style.margin = "8px 0 0";
+      T20.forEach((tx, i) => { const li = el("li", null, tx); if (i === gi) { li.style.background = "#fff4d6"; li.style.fontWeight = "600"; } ul.append(li); });
+      const det20 = el("details"); det20.append(el("summary", null, "ดูครบทั้ง 20 กลุ่ม"), ul);
+      const k20 = el("p", "kv"); k20.append(el("b", null, "ลักษณะนิสัยเด่น: "), document.createTextNode(T20[gi]));
+      b20.replaceChildren(el("h3", null, "🔎 คุณอยู่กลุ่มไหนใน 20 กลุ่มลักษณะนิสัย"), el("p", "big", `กลุ่มที่ ${gi + 1}`), k20, det20);
+      // 6 มิติ: ซื่อสัตย์/อารมณ์ อิงข้อมูลวันเกิดที่แสดงด้านบน ส่วนที่เหลือคำนวณคงที่จากวัน-เดือน-ปีเกิด
+      const seed = y * 10000 + m * 100 + d;
+      const sc6 = [
+        P.honest[1],
+        Math.max(20, Math.min(95, 100 - P.mood[1] + 10)),
+        ...[3, 4, 5, 6].map(k => Math.round(35 + seeded(seed, k) * 60))
+      ];
+      const b6 = $("r6");
+      b6.replaceChildren(el("h3", null, "📊 ลักษณะนิสัย 6 มิติของ HEXACO"));
+      D6.forEach((dm, i) => {
+        const v = sc6[i], lv = v >= 70 ? 3 : v >= 45 ? 2 : 1;
+        const row = el("div"); row.style.cssText = "display:flex;gap:14px;margin:16px 0;padding-bottom:14px;border-bottom:1px solid #eee9fb";
+        const badge = el("div", null, dm[4]);
+        badge.style.cssText = `flex:none;width:46px;height:46px;border-radius:12px;background:${dm[6]};color:#fff;font-weight:700;font-size:22px;display:grid;place-items:center`;
+        const body = el("div"); body.style.minWidth = "0";
+        const ttl = el("p", "kv"); ttl.style.margin = "0";
+        ttl.append(el("b", null, `${i + 1}. ${dm[0]} `), document.createTextNode(`— ${v}% (${["ต่ำ", "กลาง", "สูง"][lv - 1]})`));
+        const en = el("p", "kv", dm[5]); en.style.cssText = "margin:0;color:var(--muted);font-size:13px";
+        const mt = el("div", "meter"); const fi = el("i"); fi.style.width = v + "%"; mt.append(fi); mt.setAttribute("aria-hidden", "true");
+        const hi = el("p", "kv"); hi.style.cssText = "margin:0;font-size:14px"; const hb = el("b", null, "คะแนนสูง: "); hb.style.color = "#15803d"; hi.append(hb, document.createTextNode(dm[7]));
+        const lo = el("p", "kv"); lo.style.cssText = "margin:0;font-size:14px"; const lb = el("b", null, "คะแนนต่ำ: "); lb.style.color = "#15803d"; lo.append(lb, document.createTextNode(dm[8]));
+        const me = el("p", "kv"); me.style.cssText = "margin:6px 0 0;padding:6px 10px;background:#fff4d6;border-radius:8px;font-size:14px"; me.append(el("b", null, "ของคุณ: "), document.createTextNode(dm[lv]));
+        body.append(ttl, en, mt, hi, lo, me);
+        row.append(badge, body);
+        b6.append(row);
+      });
+      b6.append(el("p", "kv", "* เปอร์เซ็นต์เป็นค่าประมาณเพื่อความบันเทิง ไม่ใช่ผลแบบทดสอบบุคลิกภาพจริง"));
+      // เลือก 1 ใน 9 ประเภท: (วัน + 2×เดือน + ปี ค.ศ.) หารเอาเศษ 9
+      const ni = (d + 2 * m + y) % 9, n9 = T9[ni], b9 = $("r9");
+      const tb9 = el("table");
+      const h9 = tb9.insertRow();
+      ["ประเภท", "นิสัยเด่น", "ด้านที่ควรระวัง", "ความกลัวพื้นฐาน"].forEach(h => { const c = document.createElement("th"); c.textContent = h; h9.append(c); });
+      T9.forEach((r, i) => {
+        const tr = tb9.insertRow();
+        if (i === ni) tr.className = "me";
+        [`${i + 1}. ${r[0]}`, r[1], r[2], r[3]].forEach(v => { tr.insertCell().textContent = v; });
+      });
+      const sc = el("div"); sc.style.overflowX = "auto"; sc.append(tb9);
+      const dt9 = el("details"); dt9.append(el("summary", null, "ดูครบทั้ง 9 ประเภท"), sc);
+      const mk = (label, txt) => { const p = el("p", "kv"); p.append(el("b", null, label), document.createTextNode(txt)); return p; };
+      b9.replaceChildren(
+        el("h3", null, "🧠 คุณคือบุคลิกภาพ 1 ใน 9 ประเภท"),
+        el("p", "big", `${ni + 1}. ${n9[0]}`),
+        mk("นิสัยเด่น: ", n9[1]), mk("ด้านที่ควรระวัง: ", n9[2]), mk("ความกลัวพื้นฐาน: ", n9[3]),
+        dt9
       );
       const ex = $("rExtra");
       ex.replaceChildren(
