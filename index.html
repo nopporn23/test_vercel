@@ -3,297 +3,263 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0f766e">
-  <title>บัญชีรายรับรายจ่ายหมู่บ้าน</title>
+  <meta name="theme-color" content="#3b1d6e">
+  <title>ดูดวงตามวันเดือนปีเกิด</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --ink: #14232b;
-      --muted: #62727b;
-      --line: #e3eaee;
-      --bg: #f3f7f6;
-      --card: #fff;
-      --teal: #0f766e;
-      --teal-soft: #d9f2ee;
-      --in: #15803d;
-      --in-soft: #dcfce7;
-      --out: #c2410c;
-      --out-soft: #ffedd5;
-      --blue: #1d4ed8;
+      --ink: #231a3a;
+      --muted: #6d6585;
+      --gold: #f5c04a;
+      --purple: #3b1d6e;
+      --purple2: #5b2fa8;
+      --card: rgba(255,255,255,.95);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: "Noto Sans Thai", sans-serif;
       color: var(--ink);
-      background: var(--bg);
-      line-height: 1.6;
+      line-height: 1.7;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(245,192,74,.25), transparent 22rem),
+        radial-gradient(circle at 90% 30%, rgba(139,92,246,.35), transparent 26rem),
+        linear-gradient(160deg, #1d0f3d 0%, #3b1d6e 55%, #2a1456 100%);
+      background-attachment: fixed;
+      padding: 28px 16px 48px;
     }
-    header {
-      background: linear-gradient(135deg, #0f766e, #115e59);
-      color: #fff;
-      padding: 28px 16px 70px;
-    }
-    .wrap { width: min(1080px, 100%); margin: 0 auto; padding: 0 16px; }
-    header .wrap { padding: 0; }
-    header h1 { margin: 0; font-size: clamp(22px, 5vw, 30px); }
-    header p { margin: 4px 0 0; opacity: .85; font-size: 15px; }
-    main { margin-top: -50px; padding-bottom: 40px; }
+    .wrap { width: min(720px, 100%); margin: 0 auto; }
+    header { text-align: center; color: #fff; margin-bottom: 22px; }
+    header .moon { font-size: 44px; filter: drop-shadow(0 0 14px rgba(245,192,74,.6)); }
+    h1 { margin: 4px 0 4px; font-size: clamp(26px, 7vw, 38px); }
+    header p { margin: 0; color: #d9cffa; font-size: 16px; }
 
-    .grid { display: grid; gap: 14px; }
-    .stats { grid-template-columns: repeat(3, 1fr); }
     .card {
       background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 6px 20px rgba(15, 60, 55, .06);
+      border-radius: 22px;
+      padding: clamp(18px, 4vw, 28px);
+      box-shadow: 0 20px 50px rgba(0,0,0,.28);
+      margin-bottom: 16px;
     }
-    .stat small { color: var(--muted); font-size: 14px; }
-    .stat b { display: block; font-size: clamp(20px, 4.5vw, 30px); margin-top: 2px; }
-    .stat.in b { color: var(--in); }
-    .stat.out b { color: var(--out); }
-    .stat.bal b { color: var(--blue); }
+    .row { display: grid; grid-template-columns: 1fr 1.6fr 1.3fr; gap: 10px; }
+    label { display: grid; gap: 4px; font-size: 14px; color: var(--muted); font-weight: 500; }
+    select, button {
+      font: inherit; width: 100%; padding: 12px; border-radius: 12px;
+      border: 1px solid #d8d0ee; background: #fff; color: var(--ink);
+    }
+    select:focus { outline: 2px solid var(--purple2); }
+    button.go {
+      margin-top: 14px; border: 0; cursor: pointer; font-weight: 700; font-size: 17px;
+      color: #3b1d6e; background: linear-gradient(135deg, #ffd978, #f5c04a);
+      box-shadow: 0 8px 20px rgba(245,192,74,.4);
+    }
+    button.go:hover { filter: brightness(1.05); }
+    .err { color: #b91c1c; font-size: 14px; margin: 10px 0 0; min-height: 1.4em; }
 
-    .cols { grid-template-columns: 340px 1fr; margin-top: 14px; align-items: start; }
-    h2 { margin: 0 0 12px; font-size: 18px; }
+    #result { display: none; }
+    .hero { text-align: center; }
+    .hero .em { font-size: 54px; line-height: 1.1; }
+    .hero small { color: var(--muted); }
+    .hero h2 { margin: 4px 0 8px; font-size: clamp(22px, 6vw, 30px); color: var(--purple); }
+    .hero p { margin: 0 auto; max-width: 540px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+    .chip { padding: 4px 14px; border-radius: 99px; background: #efe9ff; color: var(--purple2); font-size: 14px; font-weight: 600; }
 
-    form { display: grid; gap: 10px; }
-    label { font-size: 14px; color: var(--muted); display: grid; gap: 4px; }
-    input, select, button {
-      font: inherit;
-      padding: 10px 12px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: #fff;
-      color: var(--ink);
-      width: 100%;
-    }
-    input:focus, select:focus { outline: 2px solid var(--teal); outline-offset: 0; }
-    .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .seg label {
-      cursor: pointer; text-align: center; padding: 10px;
-      border: 1px solid var(--line); border-radius: 10px;
-      color: var(--ink); font-weight: 600;
-    }
-    .seg input { display: none; }
-    .seg label:has(input[value="in"]:checked) { background: var(--in-soft); border-color: var(--in); color: var(--in); }
-    .seg label:has(input[value="out"]:checked) { background: var(--out-soft); border-color: var(--out); color: var(--out); }
-    .btn {
-      background: var(--teal); color: #fff; border: 0; font-weight: 600; cursor: pointer;
-    }
-    .btn:hover { background: #115e59; }
-    .btn.ghost { background: #fff; color: var(--teal); border: 1px solid var(--teal); }
-    .btn.sm { width: auto; padding: 6px 12px; font-size: 14px; }
+    .traits { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .trait { background: var(--card); border-radius: 18px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
+    .trait h3 { margin: 0 0 4px; font-size: 17px; color: var(--purple); }
+    .trait p { margin: 0; font-size: 15px; }
+    .meter { height: 8px; border-radius: 99px; background: #eee9fb; margin: 8px 0 10px; overflow: hidden; }
+    .meter i { display: block; height: 100%; background: linear-gradient(90deg, #8b5cf6, #f5c04a); border-radius: 99px; }
+    .extra h3 { margin: 0 0 6px; color: var(--purple); }
+    .extra p { margin: 0 0 10px; font-size: 15px; }
+    .note { color: #cfc4f0; font-size: 13px; text-align: center; margin-top: 18px; }
 
-    .toolbar { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 8px; margin-bottom: 12px; }
-    table { width: 100%; border-collapse: collapse; font-size: 15px; }
-    th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
-    th { color: var(--muted); font-weight: 500; font-size: 13px; }
-    td.amt { text-align: right; font-weight: 600; white-space: nowrap; }
-    td.amt.in { color: var(--in); }
-    td.amt.out { color: var(--out); }
-    .tag { display: inline-block; padding: 1px 10px; border-radius: 999px; background: var(--teal-soft); color: var(--teal); font-size: 13px; }
-    .del { background: none; border: 0; color: #b91c1c; cursor: pointer; width: auto; padding: 2px 6px; }
-    .empty { text-align: center; color: var(--muted); padding: 28px 0; }
-
-    .bars { display: grid; gap: 10px; }
-    .bar-row { display: grid; grid-template-columns: 110px 1fr 90px; gap: 8px; align-items: center; font-size: 14px; }
-    .bar-track { height: 12px; background: #edf2f4; border-radius: 99px; overflow: hidden; }
-    .bar-fill { height: 100%; border-radius: 99px; background: var(--out); }
-    .bar-row span:last-child { text-align: right; }
-    .side { display: grid; gap: 14px; }
-    .note { color: var(--muted); font-size: 13px; margin-top: 14px; }
-
-    @media (max-width: 860px) {
-      .cols { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 560px) {
-      .stats { grid-template-columns: 1fr; }
-      .toolbar { grid-template-columns: 1fr 1fr; }
-      /* ตารางแบบการ์ดบนมือถือ */
-      thead { display: none; }
-      table, tbody, tr, td { display: block; width: 100%; }
-      tr { padding: 10px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto; }
-      td { border: 0; padding: 2px 0; }
-      td.amt { text-align: right; grid-row: 1; grid-column: 2; }
-      td.d { color: var(--muted); font-size: 13px; }
-      td.x { text-align: right; }
-    }
-    @media print {
-      header { background: none; color: #000; padding: 0; }
-      form, .toolbar, .del, .no-print { display: none !important; }
-      main { margin: 0; }
+    @media (max-width: 520px) {
+      .row { grid-template-columns: 1fr 1fr; }
+      .row label:last-child { grid-column: 1 / -1; }
+      .traits { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="wrap">
-      <h1>🏘️ บัญชีรายรับรายจ่ายหมู่บ้าน</h1>
-      <p>บันทึกค่าส่วนกลาง รายรับ และค่าใช้จ่ายของหมู่บ้าน — ข้อมูลเก็บในเครื่องนี้</p>
-    </div>
-  </header>
+  <div class="wrap">
+    <header>
+      <div class="moon">🔮</div>
+      <h1>ดูดวงตามวันเดือนปีเกิด</h1>
+      <p>เลือกวัน เดือน ปีเกิดของคุณ แล้วดูว่าคุณเป็นคนประเภทไหน</p>
+    </header>
 
-  <main class="wrap">
-    <section class="grid stats">
-      <div class="card stat in"><small>รายรับรวม</small><b id="sIn">0.00</b></div>
-      <div class="card stat out"><small>รายจ่ายรวม</small><b id="sOut">0.00</b></div>
-      <div class="card stat bal"><small>ยอดคงเหลือ</small><b id="sBal">0.00</b></div>
+    <form class="card" id="form" novalidate>
+      <div class="row">
+        <label>วันที่<select id="d" required></select></label>
+        <label>เดือน<select id="m" required></select></label>
+        <label>ปีเกิด (พ.ศ.)<select id="y" required></select></label>
+      </div>
+      <button class="go" type="submit">✨ ดูดวงเลย</button>
+      <p class="err" id="err" role="alert"></p>
+    </form>
+
+    <section id="result" aria-live="polite">
+      <div class="card hero">
+        <div class="em" id="rEm"></div>
+        <small id="rDate"></small>
+        <h2 id="rType"></h2>
+        <p id="rSum"></p>
+        <div class="chips" id="rChips"></div>
+      </div>
+      <div class="traits" id="rTraits"></div>
+      <div class="card extra" id="rExtra" style="margin-top:16px"></div>
     </section>
 
-    <section class="grid cols">
-      <div class="side">
-        <div class="card">
-          <h2>เพิ่มรายการ</h2>
-          <form id="form">
-            <div class="seg">
-              <label><input type="radio" name="type" value="in" checked>รายรับ</label>
-              <label><input type="radio" name="type" value="out">รายจ่าย</label>
-            </div>
-            <label>วันที่<input type="date" id="date" required></label>
-            <label>หมวดหมู่<select id="cat" required></select></label>
-            <label>รายละเอียด<input type="text" id="desc" maxlength="120" placeholder="เช่น ค่าส่วนกลางบ้านเลขที่ 12" required></label>
-            <label>จำนวนเงิน (บาท)<input type="number" id="amount" min="0.01" step="0.01" inputmode="decimal" required></label>
-            <button class="btn" type="submit">บันทึกรายการ</button>
-          </form>
-        </div>
-        <div class="card">
-          <h2>รายจ่ายตามหมวดหมู่</h2>
-          <div class="bars" id="bars"></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>รายการทั้งหมด</h2>
-        <div class="toolbar">
-          <select id="fMonth" aria-label="เดือน"></select>
-          <select id="fType" aria-label="ประเภท">
-            <option value="">ทุกประเภท</option>
-            <option value="in">รายรับ</option>
-            <option value="out">รายจ่าย</option>
-          </select>
-          <select id="fCat" aria-label="หมวดหมู่"></select>
-          <button class="btn ghost sm no-print" id="csv" type="button">ส่งออก CSV</button>
-        </div>
-        <table>
-          <thead><tr><th>วันที่</th><th>รายการ</th><th>หมวดหมู่</th><th style="text-align:right">จำนวนเงิน</th><th></th></tr></thead>
-          <tbody id="rows"></tbody>
-        </table>
-        <p class="note">* ผลรวมด้านบนคำนวณตามตัวกรองที่เลือก · ข้อมูลอยู่ในเบราว์เซอร์ของเครื่องนี้เท่านั้น ควรส่งออก CSV สำรองไว้เป็นระยะ ·
-          <a href="#" id="clear">ล้างข้อมูลทั้งหมด</a></p>
-      </div>
-    </section>
-  </main>
+    <p class="note">* เพื่อความบันเทิงเท่านั้น ไม่ใช่การวินิจฉัยหรือคำทำนายที่พิสูจน์ได้ทางวิทยาศาสตร์ ใช้เป็นแนวทางสนุกๆ ประกอบการพูดคุยได้ครับ<br>
+      ข้อมูลที่กรอกประมวลผลในเบราว์เซอร์ ไม่ถูกส่งหรือเก็บไว้ที่ใด</p>
+  </div>
 
   <script>
-    const KEY = "village-ledger-v1";
-    const CATS = {
-      in: ["ค่าส่วนกลาง", "ค่าปรับ", "เงินบริจาค", "ดอกเบี้ย", "รายรับอื่นๆ"],
-      out: ["ค่าไฟส่วนกลาง", "ค่าน้ำ", "ค่าจ้างรักษาความปลอดภัย", "ค่าทำความสะอาด", "ซ่อมบำรุง", "กิจกรรมหมู่บ้าน", "รายจ่ายอื่นๆ"]
-    };
+    const MONTHS = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+    const DAYS = ["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
+
+    // ลักษณะตามวันเกิด (ตามตำราโหราศาสตร์ไทยแบบทั่วไป — เพื่อความบันเทิง)
+    // score: [อารมณ์, ความซื่อสัตย์]  เป็นค่าประกอบภาพ (0-100) ไม่ใช่การวัดจริง
+    const DAY = [
+      { em:"☀️", type:"นักคิดรักความสงบ ใจเย็น มีเมตตา", color:"แดง",
+        sum:"คุณเป็นคนมีอุดมคติ รักความยุติธรรม มักเป็นที่พึ่งของคนรอบข้าง แต่บางทีเก็บทุกอย่างไว้คนเดียว",
+        mood:["ใจเย็น มั่นคง แต่ถ้าถูกกดดันนานๆ จะเงียบและถอยห่าง ก่อนระเบิดอารมณ์ครั้งใหญ่", 70],
+        nature:"รักอิสระ ชอบเป็นผู้นำโดยไม่รู้ตัว คิดรอบคอบก่อนตัดสินใจ มีความเมตตาสูงแต่ไม่ชอบถูกบังคับ",
+        honest:["ยึดมั่นในหลักการ พูดจริงทำจริง ไม่ชอบโกหกแม้เป็นเรื่องเล็ก", 85],
+        persona:"ดูสง่า น่าเคารพ พูดน้อยแต่มีน้ำหนัก ให้ความรู้สึกไว้ใจได้" },
+      { em:"🌙", type:"คนอ่อนโยน ละเอียดอ่อน เห็นอกเห็นใจ", color:"เหลือง",
+        sum:"คุณเป็นคนอบอุ่น ใส่ใจความรู้สึกคนอื่น เข้ากับผู้คนง่าย แต่มักคิดมากและใจอ่อนเกินไปบางครั้ง",
+        mood:["อารมณ์ขึ้นลงตามสถานการณ์ ไวต่อคำพูดของคนอื่น แต่หายเร็วเมื่อได้พักผ่อน", 60],
+        nature:"ขี้เกรงใจ เป็นผู้ฟังที่ดี มีจินตนาการ ชอบความสวยงามและความเป็นระเบียบ ตัดสินใจช้าเพราะกลัวใครเสียใจ",
+        honest:["จริงใจกับคนที่สนิท แต่บางครั้งเลี่ยงพูดความจริงที่อาจทำร้ายความรู้สึกผู้อื่น", 72],
+        persona:"หน้าตาอ่อนโยน เป็นกันเอง ยิ้มง่าย ทำให้คนรอบข้างรู้สึกสบายใจ" },
+      { em:"🔥", type:"นักสู้ตรงไปตรงมา กล้าหาญ มุ่งมั่น", color:"ชมพู",
+        sum:"คุณเป็นคนพลังงานเต็มเปี่ยม กล้าคิดกล้าทำ ไม่กลัวอุปสรรค แต่ต้องระวังอารมณ์ร้อนที่อาจทำให้เสียความสัมพันธ์",
+        mood:["ร้อนเร็วหายเร็ว โมโหง่ายแต่ไม่ผูกใจเจ็บ ต้องการพื้นที่ระบายพลังงาน", 45],
+        nature:"ใจนักเลง รักพวกพ้อง ไม่ยอมแพ้ง่าย ชอบความท้าทาย พูดตรง ไม่ชอบอ้อมค้อม",
+        honest:["พูดตรงไปตรงมา ไม่เสแสร้ง ซื่อสัตย์แบบไม่มีการปรุงแต่ง บางครั้งตรงจนคนฟังเจ็บ", 88],
+        persona:"ดูมั่นใจ ท่าทางกระฉับกระเฉง น้ำเสียงหนักแน่น เป็นจุดสนใจโดยไม่ตั้งใจ" },
+      { em:"🌿", type:"นักสื่อสารช่างพูด ปรับตัวเก่ง ฉลาดเฉลียว", color:"เขียว",
+        sum:"คุณเป็นคนหัวไว เรียนรู้เร็ว เข้ากับคนได้ทุกกลุ่ม เหมาะกับงานที่ต้องใช้ไหวพริบและการพูดคุย แต่บางครั้งใจเปลี่ยนเร็ว",
+        mood:["อารมณ์แจ่มใส ร่าเริง แต่ไวต่อความเครียดจนคิดฟุ้งซ่านได้", 65],
+        nature:"ช่างสังเกต ช่างพูด ชอบเรียนรู้สิ่งใหม่ มองโลกในแง่ดี รักความสะดวกสบาย และไม่ชอบอยู่นิ่ง",
+        honest:["พูดเก่งจึงต้องระวังการพูดเกินจริงเพื่อเอาใจ แต่ถ้าสัญญาแล้วมักทำตามที่รับปาก", 68],
+        persona:"คล่องแคล่ว มีเสน่ห์ในการพูดคุย ยิ้มแย้ม เข้าหาคนง่าย" },
+      { em:"📚", type:"ผู้ใหญ่ใจดี น่าเชื่อถือ รักความเป็นธรรม", color:"ส้ม",
+        sum:"คุณเป็นคนมีเหตุผล สุขุม ใฝ่รู้ เป็นที่ปรึกษาที่ดี ผู้คนมักเคารพและไว้ใจ แต่บางครั้งยึดความคิดตัวเองมากไป",
+        mood:["สุขุม นิ่ง ควบคุมอารมณ์ได้ดี ไม่ค่อยแสดงออกว่าโกรธหรือเสียใจ", 85],
+        nature:"รักการเรียนรู้ มีศีลธรรมในใจ ใจกว้าง ชอบช่วยเหลือคนอื่น มีความคิดเป็นระบบ",
+        honest:["ซื่อสัตย์ มีหลักคุณธรรมสูง ถือคำพูดเป็นสิ่งสำคัญ คนรอบข้างมักฝากความลับได้", 92],
+        persona:"สุภาพ น่านับถือ แต่งกายเรียบร้อย พูดจามีหลักการ ดูเป็นผู้ใหญ่เกินวัย" },
+      { em:"💖", type:"คนมีเสน่ห์ รักความสวยงาม ใจกว้าง", color:"ฟ้า",
+        sum:"คุณเป็นคนมีเสน่ห์ ชอบสังคม รักความสุขและสิ่งสวยงาม มีคนรักใคร่เอ็นดู แต่ต้องระวังการใช้จ่ายและความรักที่ท่วมท้น",
+        mood:["อารมณ์ดี ชอบความสุนทรีย์ แต่ถ้าถูกปฏิเสธจะเสียใจมากกว่าที่แสดงออก", 75],
+        nature:"รักความสะดวกสบาย โอบอ้อมอารี รักสนุก ชอบแต่งตัว ชอบมีเพื่อนเยอะ ใจอ่อนกับคนที่รัก",
+        honest:["จริงใจในความสัมพันธ์ แต่บางครั้งไม่อยากขัดใจใคร จึงรับปากง่ายกว่าที่ทำได้จริง", 70],
+        persona:"หน้าตาสดใส มีออร่า แต่งตัวมีรสนิยม เป็นที่ดึงดูดสายตา" },
+      { em:"⛰️", type:"คนอดทน หนักแน่น ทำงานจริงจัง", color:"ม่วง/ดำ",
+        sum:"คุณเป็นคนอดทน มีความรับผิดชอบสูง ทำอะไรต้องทำให้สำเร็จ มักสร้างตัวด้วยตัวเอง แต่เก็บความรู้สึกเก่งจนคนอื่นเข้าถึงยาก",
+        mood:["ดูนิ่งภายนอก แต่ภายในคิดมากและเก็บกด ควรหาเวลาผ่อนคลายและพูดความรู้สึกออกมา", 55],
+        nature:"ขยัน อดทน รักความสงบ ชอบวางแผนระยะยาว ระวังตัว ไม่ไว้ใจใครง่าย แต่เมื่อไว้ใจแล้วจะเป็นเพื่อนแท้",
+        honest:["ซื่อตรง รักษาสัญญา ไม่ชอบเอาเปรียบคนอื่น ความจงรักภักดีสูงมากกับคนที่ไว้ใจ", 90],
+        persona:"สุขุม ดูลึกลับเล็กน้อย พูดน้อยแต่จริงจัง ให้ความรู้สึกพึ่งพาได้" }
+    ];
+
+    // ราศีสากล: [ชื่อ, สัญลักษณ์, ธาตุ, ลักษณะ, วันเริ่ม(เดือน,วัน)]
+    const ZOD = [
+      ["มังกร","♑","ดิน","จริงจัง มีวินัย ทะเยอทะยาน",[12,22]],
+      ["กุมภ์","♒","ลม","เป็นตัวของตัวเอง รักอิสระ คิดนอกกรอบ",[1,20]],
+      ["มีน","♓","น้ำ","อ่อนไหว มีจินตนาการ เห็นอกเห็นใจ",[2,19]],
+      ["เมษ","♈","ไฟ","กล้าหาญ กระตือรือร้น ชอบนำ",[3,21]],
+      ["พฤษภ","♉","ดิน","มั่นคง อดทน รักความสบาย",[4,20]],
+      ["เมถุน","♊","ลม","ช่างพูดคุย อยากรู้อยากเห็น ปรับตัวเก่ง",[5,21]],
+      ["กรกฎ","♋","น้ำ","รักครอบครัว อ่อนโยน ปกป้องคนที่รัก",[6,21]],
+      ["สิงห์","♌","ไฟ","มั่นใจ ใจกว้าง รักเกียรติ",[7,23]],
+      ["กันย์","♍","ดิน","ละเอียด รอบคอบ ชอบความเป็นระเบียบ",[8,23]],
+      ["ตุลย์","♎","ลม","รักความสมดุล มีเสน่ห์ ชอบความยุติธรรม",[9,23]],
+      ["พิจิก","♏","น้ำ","ลึกซึ้ง มุ่งมั่น หวงแหนคนที่รัก",[10,23]],
+      ["ธนู","♐","ไฟ","รักอิสระ มองโลกแง่ดี ชอบผจญภัย",[11,22]]
+    ];
+    function zodiac(m, d) {
+      let z = ZOD[0];
+      if (m === 12 && d >= 22) return z;
+      for (const s of ZOD.slice(1)) {
+        const [sm, sd] = s[4];
+        if (m > sm || (m === sm && d >= sd)) z = s;
+      }
+      return z;
+    }
+    // นักษัตร: ปี ค.ศ. 4 = ชวด (ใช้ปีปฏิทินเป็นหลัก ไม่คิดวันตรุษจีน)
+    const ANIMAL = ["ชวด (หนู)","ฉลู (วัว)","ขาล (เสือ)","เถาะ (กระต่าย)","มะโรง (งูใหญ่)","มะเส็ง (งูเล็ก)","มะเมีย (ม้า)","มะแม (แพะ)","วอก (ลิง)","ระกา (ไก่)","จอ (สุนัข)","กุน (หมู)"];
+    const AEMOJI = ["🐭","🐮","🐯","🐰","🐲","🐍","🐴","🐑","🐵","🐔","🐶","🐷"];
+
     const $ = id => document.getElementById(id);
-    const fmt = n => n.toLocaleString("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const thDate = iso => new Date(iso + "T00:00:00").toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "2-digit" });
-    const thMonth = ym => new Date(ym + "-01T00:00:00").toLocaleDateString("th-TH", { month: "long", year: "numeric" });
+    const nowCE = new Date().getFullYear();
 
-    let items = [];
-    try { items = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { items = []; }
-    const save = () => { try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) { alert("ไม่สามารถบันทึกข้อมูลในเบราว์เซอร์ได้"); } };
+    // เติมตัวเลือก
+    $("d").append(new Option("วัน", ""), ...Array.from({length:31}, (_, i) => new Option(i + 1, i + 1)));
+    $("m").append(new Option("เดือน", ""), ...MONTHS.map((n, i) => new Option(n, i + 1)));
+    $("y").append(new Option("ปี พ.ศ.", ""), ...Array.from({length:111}, (_, i) => new Option(nowCE + 543 - i, nowCE - i)));
 
-    const typeVal = () => document.querySelector('input[name="type"]:checked').value;
-    function fillCats() {
-      $("cat").replaceChildren(...CATS[typeVal()].map(c => new Option(c, c)));
+    function el(tag, cls, text) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text != null) e.textContent = text;
+      return e;
     }
-    function fillFilters() {
-      const months = [...new Set(items.map(i => i.date.slice(0, 7)))].sort().reverse();
-      const mSel = $("fMonth"), cSel = $("fCat");
-      const mv = mSel.value, cv = cSel.value;
-      mSel.replaceChildren(new Option("ทุกเดือน", ""), ...months.map(m => new Option(thMonth(m), m)));
-      const allCats = [...new Set([...CATS.in, ...CATS.out])];
-      cSel.replaceChildren(new Option("ทุกหมวดหมู่", ""), ...allCats.map(c => new Option(c, c)));
-      mSel.value = months.includes(mv) ? mv : "";
-      cSel.value = cv;
-    }
-    function filtered() {
-      const m = $("fMonth").value, t = $("fType").value, c = $("fCat").value;
-      return items
-        .filter(i => (!m || i.date.startsWith(m)) && (!t || i.type === t) && (!c || i.cat === c))
-        .sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
-    }
-    function render() {
-      const list = filtered();
-      const sum = t => list.filter(i => i.type === t).reduce((s, i) => s + Math.round(i.amount * 100), 0) / 100;
-      const inc = sum("in"), exp = sum("out");
-      $("sIn").textContent = fmt(inc);
-      $("sOut").textContent = fmt(exp);
-      $("sBal").textContent = fmt(Math.round((inc - exp) * 100) / 100);
-
-      const tb = $("rows");
-      tb.replaceChildren();
-      if (!list.length) {
-        const tr = tb.insertRow(), td = tr.insertCell();
-        td.colSpan = 5; td.className = "empty"; td.textContent = "ยังไม่มีรายการ";
-      }
-      for (const i of list) {
-        const tr = tb.insertRow();
-        const add = (txt, cls) => { const td = tr.insertCell(); td.textContent = txt; if (cls) td.className = cls; return td; };
-        add(thDate(i.date), "d");
-        add(i.desc);
-        const tc = tr.insertCell(); const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = i.cat; tc.append(tag);
-        add((i.type === "in" ? "+" : "−") + fmt(i.amount), "amt " + i.type);
-        const x = tr.insertCell(); x.className = "x";
-        const b = document.createElement("button"); b.className = "del"; b.textContent = "ลบ"; b.title = "ลบรายการ";
-        b.onclick = () => { if (confirm("ลบรายการนี้?")) { items = items.filter(z => z.id !== i.id); save(); fillFilters(); render(); } };
-        x.append(b);
-      }
-
-      // กราฟแท่งรายจ่ายตามหมวด
-      const by = {};
-      list.filter(i => i.type === "out").forEach(i => by[i.cat] = (by[i.cat] || 0) + i.amount);
-      const entries = Object.entries(by).sort((a, b) => b[1] - a[1]);
-      const max = entries.length ? entries[0][1] : 1;
-      const bars = $("bars");
-      bars.replaceChildren();
-      if (!entries.length) { const p = document.createElement("div"); p.className = "empty"; p.textContent = "ยังไม่มีรายจ่าย"; bars.append(p); }
-      for (const [c, v] of entries) {
-        const row = document.createElement("div"); row.className = "bar-row";
-        const n = document.createElement("span"); n.textContent = c;
-        const tr = document.createElement("div"); tr.className = "bar-track";
-        const f = document.createElement("div"); f.className = "bar-fill"; f.style.width = (v / max * 100) + "%"; tr.append(f);
-        const a = document.createElement("span"); a.textContent = fmt(v);
-        row.append(n, tr, a); bars.append(row);
-      }
+    function trait(title, text, score) {
+      const c = el("div", "trait");
+      c.append(el("h3", null, title));
+      if (score != null) { const m = el("div", "meter"); const i = el("i"); i.style.width = score + "%"; m.append(i); m.setAttribute("aria-hidden", "true"); c.append(m); }
+      c.append(el("p", null, text));
+      return c;
     }
 
-    document.querySelectorAll('input[name="type"]').forEach(r => r.addEventListener("change", fillCats));
-    ["fMonth", "fType", "fCat"].forEach(id => $(id).addEventListener("change", render));
     $("form").addEventListener("submit", e => {
       e.preventDefault();
-      const amount = Math.round(parseFloat($("amount").value) * 100) / 100;
-      if (!(amount > 0)) return;
-      items.push({ id: Date.now(), type: typeVal(), date: $("date").value, cat: $("cat").value, desc: $("desc").value.trim(), amount });
-      save(); fillFilters(); render();
-      $("desc").value = ""; $("amount").value = ""; $("desc").focus();
-    });
-    $("csv").addEventListener("click", () => {
-      const esc = s => '"' + String(s).replace(/"/g, '""') + '"';
-      const rows = [["วันที่", "ประเภท", "หมวดหมู่", "รายละเอียด", "จำนวนเงิน"], ...filtered().map(i =>
-        [i.date, i.type === "in" ? "รายรับ" : "รายจ่าย", i.cat, i.desc, i.amount.toFixed(2)])];
-      const blob = new Blob(["﻿" + rows.map(r => r.map(esc).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob); a.download = "village-ledger.csv"; a.click();
-      URL.revokeObjectURL(a.href);
-    });
-    $("clear").addEventListener("click", e => {
-      e.preventDefault();
-      if (confirm("ลบข้อมูลทั้งหมดถาวร? (ไม่สามารถกู้คืนได้)")) { items = []; save(); fillFilters(); render(); }
-    });
+      const d = +$("d").value, m = +$("m").value, y = +$("y").value;
+      const err = $("err");
+      err.textContent = "";
+      if (!d || !m || !y) { err.textContent = "กรุณาเลือกวัน เดือน และปีเกิดให้ครบ"; return; }
+      const dt = new Date(y, m - 1, d);
+      if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) {
+        err.textContent = "วันที่ไม่ถูกต้อง (เช่น เดือนนี้ไม่มีวันที่ " + d + ")"; return;
+      }
+      if (dt > new Date()) { err.textContent = "วันเกิดต้องไม่เกินวันนี้"; return; }
 
-    $("date").value = new Date().toISOString().slice(0, 10);
-    fillCats(); fillFilters(); render();
+      const dow = dt.getDay(), P = DAY[dow], z = zodiac(m, d), ai = ((y - 4) % 12 + 12) % 12;
+
+      $("rEm").textContent = P.em;
+      $("rDate").textContent = `เกิดวัน${DAYS[dow]}ที่ ${d} ${MONTHS[m - 1]} พ.ศ. ${y + 543}`;
+      $("rType").textContent = P.type;
+      $("rSum").textContent = P.sum;
+      $("rChips").replaceChildren(
+        el("span", "chip", `วัน${DAYS[dow]}`),
+        el("span", "chip", `ราศี${z[0]} ${z[1]}`),
+        el("span", "chip", `ปี${ANIMAL[ai]} ${AEMOJI[ai]}`),
+        el("span", "chip", `สีมงคล: ${P.color}`)
+      );
+      $("rTraits").replaceChildren(
+        trait("😊 อารมณ์", P.mood[0], P.mood[1]),
+        trait("🧭 นิสัย", P.nature),
+        trait("🤝 ความซื่อสัตย์", P.honest[0], P.honest[1]),
+        trait("🎭 บุคลิก", P.persona)
+      );
+      const ex = $("rExtra");
+      ex.replaceChildren(
+        el("h3", null, `${z[1]} เสริมจากราศี${z[0]} (ธาตุ${z[2]})`),
+        el("p", null, `ราศี${z[0]}มักมีลักษณะ ${z[3]} จึงเสริมให้ภาพรวมของคุณมีมิติมากขึ้น`),
+        el("h3", null, `${AEMOJI[ai]} เสริมจากปีนักษัตร${ANIMAL[ai]}`),
+        el("p", null, "คนปีเดียวกันมักมีบุคลิกคล้ายกันในบางด้านตามความเชื่อโบราณ (คำนวณตามปีปฏิทิน ไม่รวมกรณีเกิดช่วงก่อนตรุษจีน)")
+      );
+      $("result").style.display = "block";
+      $("result").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   </script>
 </body>
 </html>
