@@ -132,6 +132,8 @@
       <div class="card t12" id="r6" style="margin-top:16px"></div>
       <div class="card t12" id="r9" style="margin-top:16px"></div>
       <div class="card t12" id="rF" style="margin-top:16px"></div>
+      <div class="card t12" id="rD" style="margin-top:16px"></div>
+      <div class="card t12" id="rW" style="margin-top:16px"></div>
       <div class="card t12" id="rL" style="margin-top:16px"></div>
       <div class="card t12" id="rC" style="margin-top:16px"></div>
       <div class="card t12" id="rM" style="margin-top:16px"></div>
@@ -381,6 +383,39 @@
     }
     let cur = null;
 
+    // ===== ดวงรายวัน =====
+    const COLS = [["ขาว","#ffffff"],["ครีม","#f5ecd0"],["เขียว","#22a35a"],["ฟ้า","#4aa8e8"],["ชมพู","#f27fb0"],["ส้ม","#f28c28"],
+      ["ม่วง","#8b5cf6"],["เหลือง","#f5d130"],["แดง","#dc2626"],["น้ำเงิน","#1e40af"],["ทอง","#d4a017"],["ดำ","#222222"],["เทา","#888888"]];
+    const WDAY_COL = ["แดง","เหลือง","ชมพู","เขียว","ส้ม","ฟ้า","ม่วง"];   // สีประจำวันตามธรรมเนียมไทย อาทิตย์–เสาร์
+    const DT = {
+      work: [["งานอาจติดขัดหรือสื่อสารคลาดเคลื่อน ตรวจซ้ำก่อนส่งงาน","ระวังรับงานเพิ่มจนเกินกำลัง ทำทีละอย่างจะปลอดภัยกว่า"],
+             ["งานเรียบร้อยตามแผน จัดลำดับความสำคัญตั้งแต่เช้า","คุยกับทีมสั้นๆ ช่วยให้งานลื่นขึ้น"],
+             ["มีโอกาสได้รับคำชมหรือความร่วมมือ เหมาะเริ่มเรื่องสำคัญ","ไอเดียลื่นไหล เหมาะนำเสนอหรือเจรจา"]],
+      money: [["ระวังรายจ่ายฉับพลันและการซื้อตามอารมณ์ เลื่อนของชิ้นใหญ่ไปก่อน","ไม่ควรยืมหรือให้ยืมเงิน ตรวจยอดและชื่อบัญชีก่อนโอนเสมอ"],
+              ["รายรับรายจ่ายเป็นปกติ จดบัญชีสั้นๆ ก่อนนอน","ตรวจใบเสร็จและค่าธรรมเนียมที่แอบแฝง"],
+              ["อาจประหยัดได้หรือมีรายได้เล็กน้อย แต่อย่าประมาทคำชวนลงทุนผลตอบแทนสูงเกินจริง","เหมาะจัดระเบียบเงินออมหรือชำระหนี้"]],
+      love: ["ระวังน้ำเสียงและคำพูดกับคนใกล้ชิด","ส่งข้อความทักทายคนสำคัญสักข้อความ ความสัมพันธ์จะอุ่นขึ้น","บรรยากาศอบอุ่น เหมาะนัดคุยหรือทำกิจกรรมร่วมกัน"],
+      health: ["พักผ่อนให้พอและระวังอุบัติเหตุจากความรีบเร่ง หากมีอาการผิดปกติต่อเนื่องควรพบแพทย์","ดื่มน้ำให้พอและยืดเส้นยืดสาย","พลังกายดี เหมาะออกกำลังกายเบาๆ"]
+    };
+    function dayInfo(seed, dt) {
+      const k = dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate(), sd = seed * 3 + k;
+      const stars = (salt) => Math.min(5, Math.floor(seeded(sd, salt) * 5) + 1);
+      const lvOf = st => st <= 2 ? 0 : st === 3 ? 1 : 2;
+      const num = Array.from({length: 6}, (_, i) => Math.floor(seeded(sd, 100 + i) * 10)).join("");
+      const good = Math.floor(seeded(sd, 120) * COLS.length);
+      const bad = (good + 1 + Math.floor(seeded(sd, 121) * (COLS.length - 1))) % COLS.length;
+      const ws = stars(130), ms = stars(131), ls = stars(132), hs = stars(133);
+      const pick = (arr, st, salt) => arr[lvOf(st)][Math.floor(seeded(sd, salt) * 2)];
+      return { num, good: COLS[good], bad: COLS[bad], ws, ms, ls, hs,
+        wt: pick(DT.work, ws, 140), mt: pick(DT.money, ms, 141), lt: DT.love[lvOf(ls)], ht: DT.health[lvOf(hs)] };
+    }
+    const STAR = n => "★".repeat(n) + "☆".repeat(5 - n);
+    function swatch(c) {
+      const sp = document.createElement("span");
+      sp.style.cssText = `display:inline-block;width:14px;height:14px;border-radius:50%;background:${c[1]};border:1px solid #bbb;vertical-align:-2px;margin-right:4px`;
+      return sp;
+    }
+
     const $ = id => document.getElementById(id);
     const nowCE = new Date().getFullYear();
 
@@ -573,15 +608,15 @@
 
       // 1) เลขมงคล สีมงคล ทิศมงคล (เดือนนี้)
       const mk2 = (label, txt) => { const q = el("p", "kv"); q.append(el("b", null, label), document.createTextNode(txt)); return q; };
-      const ms = fseed + (cy * 12 + cm) * 31, nums = [];
-      for (let k = 0; nums.length < 3; k++) { const v = Math.floor(seeded(ms, 50 + k) * 10); if (!nums.includes(v)) nums.push(v); }
+      const ms = fseed + (cy * 12 + cm) * 31;
+      const num6 = Array.from({length: 6}, (_, k) => Math.floor(seeded(ms, 50 + k) * 10)).join("");
       const col2 = EXTRA_COLORS[Math.floor(seeded(ms, 70) * EXTRA_COLORS.length)];
       const dir = DIRS[Math.floor(seeded(ms, 71) * DIRS.length)];
       $("rL").replaceChildren(
         el("h3", null, `🍀 เลขมงคล สีมงคล ทิศมงคล ประจำเดือน${MONTHS[cm - 1]}`),
-        mk2("เลขนำโชค: ", nums.join(" · ")),
+        mk2("เลขขำๆ 6 หลักประจำเดือน: ", num6),
         mk2("สีประจำวันเกิด: ", P.color), mk2("สีเสริมเดือนนี้: ", col2), mk2("ทิศที่เป็นมงคล: ", dir),
-        el("p", "kv", "* คำนวณจากวันเกิดและเดือนปัจจุบันเพื่อความบันเทิง ใช้เป็นกำลังใจหรือแรงบันดาลใจเท่านั้น ไม่แนะนำให้ใช้เลขเพื่อเสี่ยงโชคหรือพนัน")
+        el("p", "kv", "* คำนวณจากวันเกิดและเดือนปัจจุบันเพื่อความบันเทิง เลขขำๆ ไม่ใช่เลขเด็ดและไม่มีผลต่อรางวัลใดๆ ไม่แนะนำให้ใช้เสี่ยงโชคหรือพนัน")
       );
       $("rL").lastChild.style.cssText = "font-size:13px;color:#b45309";
 
@@ -659,6 +694,38 @@
       const snt = el("p", "kv", "รูปที่สร้างจะไม่แสดงวันเดือนปีเกิดหรือเวลาเกิดของคุณ แสดงเฉพาะผลสรุป");
       snt.style.cssText = "font-size:13px;color:var(--muted);margin-top:8px";
       $("rS").replaceChildren(el("h3", null, "แชร์ผลดูดวงให้เพื่อน"), sb, snt);
+
+      // ===== ดวงวันนี้ + 6 วันข้างหน้า =====
+      const today0 = new Date(); today0.setHours(0, 0, 0, 0);
+      const dline = dt0 => dt0.toLocaleDateString("th-TH", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+      const ti = dayInfo(fseed, today0);
+      const colLine = (label, col) => { const q = el("p", "kv"); q.append(el("b", null, label), swatch(col), document.createTextNode(col[0])); return q; };
+      const catLine = (ic, name, st, txt) => { const q = el("p", "kv"); q.style.marginTop = "6px"; q.append(el("b", null, `${ic} ${name} `), el("span", null, STAR(st)), el("br"), document.createTextNode(txt)); q.children[1].style.cssText = "color:#c9933b;letter-spacing:2px"; return q; };
+      const dnote = el("p", "kv", "* เพื่อความบันเทิงและข้อคิดทั่วไป ไม่ใช่คำแนะนำทางการแพทย์ การเงิน หรือการลงทุน เลขขำๆ ไม่มีผลต่อรางวัลใดๆ");
+      dnote.style.cssText = "font-size:13px;color:#b45309;margin-top:10px";
+      $("rD").replaceChildren(
+        el("h3", null, `☀️ ดวงวันนี้ — ${dline(today0)}`),
+        colLine("👕 สีเสื้อนำโชค: ", ti.good),
+        colLine("🚫 สีกาลกิณี (ควรเลี่ยง): ", ti.bad),
+        el("p", "kv", `🎨 สีประจำวัน${DAYS[today0.getDay()]}ตามธรรมเนียม: ${WDAY_COL[today0.getDay()]}`),
+        el("p", "kv", `🔢 เลขขำๆ 6 หลักวันนี้: ${ti.num}`),
+        catLine("💼", "การงาน", ti.ws, ti.wt), catLine("💰", "การเงิน", ti.ms, ti.mt),
+        catLine("❤️", "ความรัก", ti.ls, ti.lt), catLine("🩺", "สุขภาพ", ti.hs, ti.ht),
+        dnote
+      );
+      const wk = el("div");
+      for (let i = 1; i <= 6; i++) {
+        const dd = new Date(today0); dd.setDate(dd.getDate() + i);
+        const inf = dayInfo(fseed, dd);
+        const blk = el("div"); blk.style.cssText = "padding:10px 0;border-bottom:1px solid #eee9fb";
+        const hd = el("p", "kv"); hd.style.margin = "0"; hd.append(el("b", null, dline(dd)));
+        const l2 = el("p", "kv"); l2.style.cssText = "margin:2px 0;font-size:14px";
+        l2.append(document.createTextNode("👕 "), swatch(inf.good), document.createTextNode(`${inf.good[0]}  ·  🚫 `), swatch(inf.bad), document.createTextNode(`${inf.bad[0]}  ·  🔢 ${inf.num}`));
+        blk.append(hd, l2, catLine("💼", "การงาน", inf.ws, inf.wt), catLine("💰", "การเงิน", inf.ms, inf.mt));
+        blk.querySelectorAll("p.kv").forEach(q => { if (q !== hd && q !== l2) q.style.fontSize = "14px"; });
+        wk.append(blk);
+      }
+      $("rW").replaceChildren(el("h3", null, "📆 ดวง 6 วันข้างหน้า (สี เลข กาลกิณี การงาน การเงิน)"), wk);
 
       const ex = $("rExtra");
       ex.replaceChildren(
